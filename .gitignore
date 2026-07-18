@@ -1,0 +1,17 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Frontend is maintained separately and must not be uploaded here.
+web/
+node_modules/
+.next/
+package.json
+package-lock.json

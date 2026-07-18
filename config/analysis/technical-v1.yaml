@@ -1,0 +1,15 @@
+version: technical-analysis-v1
+language: en
+minimum_score: 60
+sources:
+  indicator_version: technical-v3
+  rule_formula_version: rules-swing-v1
+  rule_config_checksum: c503472236a60102d2ff06afef5a7eff48248602db5f2bfd45194ccf206dc4e5
+  strategy_name: Swing Trend Following
+  strategy_version: swing-trend-following-v1
+  strategy_config_checksum: c40d8ee21c8dcf5f5e215f63075c2f7bfbee1bd6d615d38dd6e5f929bad9cea0
+  scoring_version: swing-technical-score-v1
+  scoring_config_checksum: db7cfd27a106195c73672f45035ba9f920d4d28246513df0ee7f9d8185f6ca90
+  ranking_version: technical-ranking-v1
+  ranking_config_checksum: e9877fdead8ba53324e3e821c6c3a68668516cf4ca01c6421c21cf485f64150b
+disclaimer: This technical analysis is informational and is not investment advice.

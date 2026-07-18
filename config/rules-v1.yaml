@@ -1,0 +1,5 @@
+formula_version: rules-v1
+indicator_version: technical-v2
+thresholds:
+  volume_spike_ratio: "1.5"
+  high_liquidity_average_traded_value: "10000000000"

@@ -1,0 +1,1 @@
+"""Deterministic BSJP strategy optimization."""

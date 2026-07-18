@@ -1,0 +1,4 @@
+# Run at 18:00 Asia/Jakarta, Monday-Friday.
+# Set CRON_TZ for cron implementations that support it.
+CRON_TZ=Asia/Jakarta
+0 18 * * 1-5 cd /opt/stocks-trading && /usr/local/bin/uv run stocks market update && /usr/local/bin/uv run stocks indicators update && /usr/local/bin/uv run stocks rules update && /usr/local/bin/uv run stocks strategies update --strategy BSJP && /usr/local/bin/uv run stocks scores update && /usr/local/bin/uv run stocks rankings update && /usr/local/bin/uv run stocks analyses update && /usr/local/bin/uv run stocks alerts update >> /var/log/stocks-trading.log 2>&1

@@ -1,0 +1,10 @@
+version: technical-ranking-v1
+source_scores:
+  scoring_version: swing-technical-score-v1
+  config_checksum: db7cfd27a106195c73672f45035ba9f920d4d28246513df0ee7f9d8185f6ca90
+eligibility:
+  require_non_null_score: true
+ordering:
+  score: descending
+  tie_method: competition
+  tie_display: symbol_ascending

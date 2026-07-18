@@ -1,0 +1,1 @@
+CALCULATION_VERSION = "technical-v3"

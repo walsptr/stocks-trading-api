@@ -1,0 +1,17 @@
+name: BSJP
+version: bsjp-v1
+enabled: false
+default: false
+description: Buy Afternoon Sell Morning
+source_rules:
+  formula_version: rules-v1
+  config_checksum: f6f6f946ea40fd38a7fd70b1a8e2fb4144e0fa09462f19eb812154c548ee7bae
+required_rules:
+  - price_above_ma5
+  - price_above_ma10
+  - ma5_above_ma10
+  - ma10_above_ma20
+  - positive_momentum
+  - volume_spike
+  - high_liquidity
+  - breakout_20

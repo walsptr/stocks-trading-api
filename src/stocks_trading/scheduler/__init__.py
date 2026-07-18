@@ -1,0 +1,1 @@
+"""Scheduled weekday pipeline execution."""

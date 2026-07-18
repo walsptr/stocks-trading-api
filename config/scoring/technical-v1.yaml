@@ -1,0 +1,26 @@
+version: technical-score-v1
+source_rules:
+  formula_version: rules-v1
+  config_checksum: f6f6f946ea40fd38a7fd70b1a8e2fb4144e0fa09462f19eb812154c548ee7bae
+weights:
+  price_above_ma5: 10
+  price_above_ma10: 10
+  ma5_above_ma10: 10
+  ma10_above_ma20: 15
+  positive_momentum: 10
+  volume_spike: 20
+  breakout_20: 15
+  high_liquidity: 10
+ratings:
+  - name: Strong Buy
+    minimum: 90
+    maximum: 100
+  - name: Buy
+    minimum: 75
+    maximum: 89
+  - name: Watchlist
+    minimum: 60
+    maximum: 74
+  - name: Ignore
+    minimum: 0
+    maximum: 59

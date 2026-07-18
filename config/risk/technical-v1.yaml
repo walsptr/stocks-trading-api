@@ -1,0 +1,13 @@
+version: technical-risk-v2
+minimum_score: 60
+stop_atr_multiple: 1.5
+target_atr_multiple: 3
+take_profit_1_r_multiple: 1.5
+take_profit_2_r_multiple: 2
+account_risk_pct: 1
+position_cap_pct: 5
+sources:
+  indicator_version: technical-v3
+  ranking_version: technical-ranking-v1
+  ranking_config_checksum: e9877fdead8ba53324e3e821c6c3a68668516cf4ca01c6421c21cf485f64150b
+disclaimer: These technical risk levels are informational and are not investment advice.

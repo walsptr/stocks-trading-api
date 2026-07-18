@@ -1,0 +1,864 @@
+snapshot_date,symbol,idx_code,issuer_name,board,sector
+2025-09-20,AADI.JK,AADI,Pt Adaro Andalan Indonesia Tbk,,Energy minerals
+2025-09-20,AALI.JK,AALI,PT Astra Agro Lestari Tbk,,Process industries
+2025-09-20,ABBA.JK,ABBA,PT Mahaka Media Tbk,,Consumer services
+2025-09-20,ABDA.JK,ABDA,PT Asuransi Bina Dana Arta Tbk Class A,,Finance
+2025-09-20,ABMM.JK,ABMM,PT ABM Investama Tbk,,Energy minerals
+2025-09-20,ACES.JK,ACES,PT Aspirasi Hidup Indonesia Tbk,,Retail trade
+2025-09-20,ACRO.JK,ACRO,PT Samcro Hyosung Adilestari Tbk Class A,,Process industries
+2025-09-20,ACST.JK,ACST,PT Acset Indonusa Tbk,,Industrial services
+2025-09-20,ADCP.JK,ADCP,PT Adhi Commuter Properti Tbk,,Finance
+2025-09-20,ADES.JK,ADES,PT Akasha Wira International Tbk,,Consumer non-durables
+2025-09-20,ADHI.JK,ADHI,PT Adhi Karya (Persero) Tbk,,Industrial services
+2025-09-20,ADMF.JK,ADMF,PT Adira Dinamika Multi Finance Tbk,,Finance
+2025-09-20,ADMG.JK,ADMG,PT Polychem Indonesia Tbk,,Process industries
+2025-09-20,ADMR.JK,ADMR,PT Alamtri Minerals Indonesia Tbk,,Energy minerals
+2025-09-20,ADRO.JK,ADRO,PT Alamtri Resources Indonesia Tbk,,Energy minerals
+2025-09-20,AEGS.JK,AEGS,PT Anugerah Spareparts Sejahtera Tbk,,Producer manufacturing
+2025-09-20,AGAR.JK,AGAR,PT Asia Sejahtera Mina Tbk,,Distribution services
+2025-09-20,AGII.JK,AGII,PT Samator Indo Gas Tbk,,Process industries
+2025-09-20,AGRO.JK,AGRO,PT Bank Raya Indonesia Tbk,,Finance
+2025-09-20,AGRS.JK,AGRS,PT Bank IBK Indonesia Tbk,,Finance
+2025-09-20,AHAP.JK,AHAP,PT Asuransi Harta Aman Pratama Tbk,,Finance
+2025-09-20,AIMS.JK,AIMS,PT Artha Mahiya Investama Tbk,,Distribution services
+2025-09-20,AISA.JK,AISA,PT FKS Food Sejahtera Tbk Class A,,Consumer non-durables
+2025-09-20,AKPI.JK,AKPI,PT Argha Karya Prima Industry Tbk,,Process industries
+2025-09-20,AKRA.JK,AKRA,PT AKR Corporindo Tbk,,Distribution services
+2025-09-20,AKSI.JK,AKSI,PT Mineral Sumberdaya Mandiri Tbk,,Finance
+2025-09-20,ALDO.JK,ALDO,PT Alkindo Naratama Tbk,,Process industries
+2025-09-20,ALII.JK,ALII,PT Ancara Logistics Indonesia Tbk,,Consumer services
+2025-09-20,ALKA.JK,ALKA,"PT Alakasa Industrindo, Tbk Class A",,Non-energy minerals
+2025-09-20,AMAG.JK,AMAG,PT Asuransi Multi Artha Guna Tbk,,Finance
+2025-09-20,AMAN.JK,AMAN,PT Makmur Berkah Amanda Tbk,,Finance
+2025-09-20,AMAR.JK,AMAR,PT Bank Amar Indonesia Tbk,,Finance
+2025-09-20,AMFG.JK,AMFG,PT Asahimas Flat Glass Tbk,,Process industries
+2025-09-20,AMIN.JK,AMIN,PT Ateliers Mecaniques D'Indonesie Tbk,,Producer manufacturing
+2025-09-20,AMMN.JK,AMMN,PT Amman Mineral Internasional Tbk,,Non-energy minerals
+2025-09-20,AMMS.JK,AMMS,PT Agung Menjangan Mas Tbk,,Process industries
+2025-09-20,AMOR.JK,AMOR,PT Ashmore Asset Management Indonesia Tbk,,Finance
+2025-09-20,AMRT.JK,AMRT,PT Sumber Alfaria Trijaya,,Retail trade
+2025-09-20,ANDI.JK,ANDI,PT Andira Agro Tbk,,Process industries
+2025-09-20,ANJT.JK,ANJT,PT Austindo Nusantara Jaya Tbk,,Process industries
+2025-09-20,ANTM.JK,ANTM,PT Aneka Tambang Tbk,,Non-energy minerals
+2025-09-20,APEX.JK,APEX,PT Apexindo Pratama Duta Tbk,,Industrial services
+2025-09-20,APIC.JK,APIC,PT Pacific Strategic Financial Tbk Class A,,Finance
+2025-09-20,APII.JK,APII,PT Arita Prima Indonesia Tbk,,Producer manufacturing
+2025-09-20,APLI.JK,APLI,PT Asiaplast Industries Tbk,,Process industries
+2025-09-20,APLN.JK,APLN,PT Agung Podomoro Land Tbk,,Finance
+2025-09-20,ARCI.JK,ARCI,PT Archi Indonesia Tbk,,Non-energy minerals
+2025-09-20,AREA.JK,AREA,PT Dunia Virtual Online Tbk,,Technology services
+2025-09-20,ARGO.JK,ARGO,PT Argo Pantes Tbk,,Process industries
+2025-09-20,ARII.JK,ARII,PT Atlas Resources Tbk,,Energy minerals
+2025-09-20,ARKA.JK,ARKA,PT Arkha Jayanti Persada Tbk,,Transportation
+2025-09-20,ARKO.JK,ARKO,PT Arkora Hydro Tbk,,Industrial services
+2025-09-20,ARNA.JK,ARNA,PT Arwana Citramulia Tbk,,Producer manufacturing
+2025-09-20,ARTA.JK,ARTA,PT Arthavest Tbk,,Consumer services
+2025-09-20,ARTO.JK,ARTO,PT Bank Jago Tbk,,Finance
+2025-09-20,ASBI.JK,ASBI,PT Asuransi Bintang Tbk,,Finance
+2025-09-20,ASDM.JK,ASDM,PT Asuransi Dayin Mitra Tbk,,Finance
+2025-09-20,ASGR.JK,ASGR,PT Astra Graphia Tbk,,Technology services
+2025-09-20,ASHA.JK,ASHA,PT Cilacap Samudera Fishing Industry Tbk,,Process industries
+2025-09-20,ASII.JK,ASII,PT Astra International Tbk,,Technology services
+2025-09-20,ASJT.JK,ASJT,PT Asuransi Jasa Tania Tbk,,Finance
+2025-09-20,ASLC.JK,ASLC,PT Autopedia Sukses Lestari Tbk,,Distribution services
+2025-09-20,ASMI.JK,ASMI,PT Asuransi Maximus Graha Persada Tbk,,Finance
+2025-09-20,ASPI.JK,ASPI,PT Andalan Sakti Primaindo Tbk,,Finance
+2025-09-20,ASPR.JK,ASPR,PT Asia Pramulia Tbk,,Producer manufacturing
+2025-09-20,ASRI.JK,ASRI,PT Alam Sutera Realty Tbk,,Finance
+2025-09-20,ASRM.JK,ASRM,PT Asuransi Ramayana Tbk,,Finance
+2025-09-20,ASSA.JK,ASSA,PT Adi Sarana Armada Tbk,,Transportation
+2025-09-20,ATAP.JK,ATAP,PT Trimitra Prawara Goldland Tbk,,Finance
+2025-09-20,ATIC.JK,ATIC,PT Anabatic Technologies Tbk,,Technology services
+2025-09-20,ATLA.JK,ATLA,PT Atlantis Subsea Indonesia Tbk,,Industrial services
+2025-09-20,AUTO.JK,AUTO,PT Astra Otoparts Tbk,,Producer manufacturing
+2025-09-20,AVIA.JK,AVIA,PT Avia Avian Tbk,,Process industries
+2025-09-20,AWAN.JK,AWAN,PT Era Digital Media Tbk,,Technology services
+2025-09-20,AXIO.JK,AXIO,PT Tera Data Indonusa Tbk,,Electronic technology
+2025-09-20,AYAM.JK,AYAM,PT Janu Putra Sejahtera Tbk,,Process industries
+2025-09-20,AYLS.JK,AYLS,PT Agro Yasa Lestari Tbk,,Process industries
+2025-09-20,BABP.JK,BABP,PT Bank MNC Internasional Tbk,,Finance
+2025-09-20,BABY.JK,BABY,PT Multitrend Indo Tbk,,Retail trade
+2025-09-20,BACA.JK,BACA,PT Bank Capital Indonesia Tbk,,Finance
+2025-09-20,BAIK.JK,BAIK,PT Bersama Mencapai Puncak Tbk,,Consumer services
+2025-09-20,BAJA.JK,BAJA,PT Saranacentral Bajatama Tbk,,Non-energy minerals
+2025-09-20,BALI.JK,BALI,PT Bali Towerindo Sentra Tbk,,Industrial services
+2025-09-20,BANK.JK,BANK,PT Bank Aladin Syariah Tbk,,Finance
+2025-09-20,BAPA.JK,BAPA,PT Bekasi Asri Pemula Tbk,,Consumer durables
+2025-09-20,BAPI.JK,BAPI,PT Bhakti Agung Propertindo Tbk,,Finance
+2025-09-20,BATA.JK,BATA,PT Sepatu Bata Tbk,,Consumer non-durables
+2025-09-20,BATR.JK,BATR,PT Benteng Api Technic Tbk,,Non-energy minerals
+2025-09-20,BAUT.JK,BAUT,PT Mitra Angkasa Sejahtera Tbk,,Distribution services
+2025-09-20,BAYU.JK,BAYU,PT Bayu Buana Tbk,,Consumer services
+2025-09-20,BBCA.JK,BBCA,PT Bank Central Asia Tbk,,Finance
+2025-09-20,BBHI.JK,BBHI,PT Allo Bank Indonesia Tbk,,Finance
+2025-09-20,BBKP.JK,BBKP,PT Bank KB Indonesia Tbk Class B,,Finance
+2025-09-20,BBLD.JK,BBLD,PT Buana Finance Tbk,,Finance
+2025-09-20,BBMD.JK,BBMD,PT Bank Mestika Dharma Tbk,,Finance
+2025-09-20,BBNI.JK,BBNI,PT Bank Negara Indonesia (Persero) Tbk Class B,,Finance
+2025-09-20,BBRI.JK,BBRI,PT Bank Rakyat Indonesia (Persero) Tbk Class B,,Finance
+2025-09-20,BBRM.JK,BBRM,PT Pelayaran Nasional Bina Buana Raya Tbk,,Transportation
+2025-09-20,BBSI.JK,BBSI,PT Krom Bank Indonesia Tbk,,Finance
+2025-09-20,BBSS.JK,BBSS,PT Bumi Benowo Sukses Sejahtera Tbk,,Industrial services
+2025-09-20,BBTN.JK,BBTN,PT Bank Tabungan Negara (Persero) Tbk,,Finance
+2025-09-20,BBYB.JK,BBYB,PT Bank Neo Commerce Tbk,,Finance
+2025-09-20,BCAP.JK,BCAP,PT MNC Kapital Indonesia Tbk,,Finance
+2025-09-20,BCIP.JK,BCIP,PT Bumi Citra Permai Tbk,,Finance
+2025-09-20,BDKR.JK,BDKR,PT Berdikari Pondasi Perkasa Tbk,,Industrial services
+2025-09-20,BDMN.JK,BDMN,PT Bank Danamon Indonesia Tbk Class A,,Finance
+2025-09-20,BEEF.JK,BEEF,PT Estika Tata Tiara Tbk,,Consumer non-durables
+2025-09-20,BEER.JK,BEER,PT Jobubu Jarum Minahasa Tbk,,Consumer non-durables
+2025-09-20,BEKS.JK,BEKS,PT Bank Pembangunan Daerah Banten (Perseroda) Tbk Class A,,Finance
+2025-09-20,BELI.JK,BELI,PT Global Digital Niaga Tbk,,Retail trade
+2025-09-20,BELL.JK,BELL,PT Trisula Textile Industries Tbk,,Consumer non-durables
+2025-09-20,BESS.JK,BESS,PT Batulicin Nusantara Maritim Tbk,,Transportation
+2025-09-20,BEST.JK,BEST,PT Bekasi Fajar Industrial Estate Tbk,,Industrial services
+2025-09-20,BFIN.JK,BFIN,PT BFI Finance Indonesia Tbk,,Finance
+2025-09-20,BGTG.JK,BGTG,PT Bank Ganesha Tbk,,Finance
+2025-09-20,BHAT.JK,BHAT,PT Bhakti Multi Artha Tbk,,Commercial services
+2025-09-20,BHIT.JK,BHIT,PT MNC Asia Holding Tbk,,Consumer services
+2025-09-20,BIKE.JK,BIKE,PT Sepeda Bersama Indonesia Tbk,,Distribution services
+2025-09-20,BIMA.JK,BIMA,PT Primarindo Asia Infrastructure Tbk,,Consumer non-durables
+2025-09-20,BINA.JK,BINA,PT Bank Ina Perdana Tbk,,Finance
+2025-09-20,BINO.JK,BINO,PT Perma Plasindo Tbk,,Producer manufacturing
+2025-09-20,BIPI.JK,BIPI,PT Astrindo Nusantara Infrastruktur Tbk,,Energy minerals
+2025-09-20,BIPP.JK,BIPP,PT Bhuwanatala Indah Permai Tbk Class A,,Finance
+2025-09-20,BIRD.JK,BIRD,PT Blue Bird Tbk,,Transportation
+2025-09-20,BISI.JK,BISI,PT BISI International Tbk,,Process industries
+2025-09-20,BJBR.JK,BJBR,PT Bank Pembangunan Daerah Jawa Barat & Banten Tbk,,Finance
+2025-09-20,BJTM.JK,BJTM,PT Bank Pembangunan Daerah Jawa Timur Tbk Class B,,Finance
+2025-09-20,BKDP.JK,BKDP,PT Bukit Darmo Property Tbk,,Finance
+2025-09-20,BKSL.JK,BKSL,PT Sentul City Tbk,,Finance
+2025-09-20,BKSW.JK,BKSW,PT Bank QNB Indonesia Tbk,,Finance
+2025-09-20,BLES.JK,BLES,PT Superior Prima Sukses Tbk,,Non-energy minerals
+2025-09-20,BLOG.JK,BLOG,PT Trimitra Trans Persada Tbk,,Transportation
+2025-09-20,BLTA.JK,BLTA,PT Berlian Laju Tanker Tbk,,Transportation
+2025-09-20,BLTZ.JK,BLTZ,PT Graha Layar Prima Tbk Class C,,Consumer services
+2025-09-20,BLUE.JK,BLUE,PT Berkah Prima Perkasa Tbk,,Distribution services
+2025-09-20,BMAS.JK,BMAS,PT Bank Maspion Indonesia Tbk,,Finance
+2025-09-20,BMBL.JK,BMBL,PT Lavender Bina Cendikia Tbk,,Commercial services
+2025-09-20,BMHS.JK,BMHS,PT Bundamedik Tbk,,Health services
+2025-09-20,BMRI.JK,BMRI,PT Bank Mandiri (Persero) Tbk,,Finance
+2025-09-20,BMSR.JK,BMSR,PT Bintang Mitra Semestaraya Tbk,,Distribution services
+2025-09-20,BMTR.JK,BMTR,PT Global Mediacom Tbk,,Consumer services
+2025-09-20,BNBA.JK,BNBA,PT Bank Bumi Arta Tbk,,Finance
+2025-09-20,BNBR.JK,BNBR,PT Bakrie & Brothers Tbk Class A,,Industrial services
+2025-09-20,BNGA.JK,BNGA,PT Bank CIMB Niaga Tbk Class A,,Finance
+2025-09-20,BNII.JK,BNII,PT Bank Maybank Indonesia Tbk Class A,,Finance
+2025-09-20,BNLI.JK,BNLI,PT Bank Permata Tbk Class A,,Finance
+2025-09-20,BOAT.JK,BOAT,PT Newport Marine Services Tbk,,Transportation
+2025-09-20,BOBA.JK,BOBA,PT Formosa Ingredient Factory Tbk,,Consumer non-durables
+2025-09-20,BOGA.JK,BOGA,PT Bintang Oto Global Tbk,,Retail trade
+2025-09-20,BOLA.JK,BOLA,PT Bali Bintang Sejahtera Tbk,,Consumer services
+2025-09-20,BOLT.JK,BOLT,PT Garuda Metalindo Tbk,,Producer manufacturing
+2025-09-20,BPFI.JK,BPFI,PT Woori Finance Indonesia Tbk,,Finance
+2025-09-20,BPII.JK,BPII,PT Batavia Prosperindo Internasional Tbk,,Commercial services
+2025-09-20,BPTR.JK,BPTR,PT Batavia Prosperindo Trans Tbk,,Finance
+2025-09-20,BRAM.JK,BRAM,PT Indo Kordsa Tbk,,Process industries
+2025-09-20,BREN.JK,BREN,PT Barito Renewables Energy Tbk,,Utilities
+2025-09-20,BRIS.JK,BRIS,PT Bank Syariah Indonesia Tbk,,Finance
+2025-09-20,BRMS.JK,BRMS,PT Bumi Resources Minerals Tbk Class A,,Non-energy minerals
+2025-09-20,BRNA.JK,BRNA,PT Berlina Tbk,,Process industries
+2025-09-20,BRPT.JK,BRPT,PT Barito Pacific Tbk,,Non-energy minerals
+2025-09-20,BRRC.JK,BRRC,PT Raja Roti Cemerlang Tbk,,Consumer non-durables
+2025-09-20,BSBK.JK,BSBK,PT Wulandari Bangun Laksana Tbk,,Finance
+2025-09-20,BSDE.JK,BSDE,PT Bumi Serpong Damai Tbk,,Finance
+2025-09-20,BSIM.JK,BSIM,PT Bank Sinarmas Tbk,,Finance
+2025-09-20,BSML.JK,BSML,PT Bintang Samudera Mandiri Lines Tbk,,Transportation
+2025-09-20,BSSR.JK,BSSR,PT Baramulti Suksessarana Tbk,,Energy minerals
+2025-09-20,BSWD.JK,BSWD,PT Bank of India Indonesia Tbk,,Finance
+2025-09-20,BTEK.JK,BTEK,PT Bumi Teknokultura Unggul Tbk,,Process industries
+2025-09-20,BTON.JK,BTON,PT Betonjaya Manunggal Tbk,,Non-energy minerals
+2025-09-20,BTPN.JK,BTPN,PT Bank SMBC Indonesia Tbk,,Finance
+2025-09-20,BTPS.JK,BTPS,PT Bank BTPN Syariah Tbk,,Finance
+2025-09-20,BUAH.JK,BUAH,PT Segar Kumala Indonesia Tbk,,Distribution services
+2025-09-20,BUDI.JK,BUDI,PT Budi Starch & Sweetener Tbk,,Process industries
+2025-09-20,BUKA.JK,BUKA,PT Bukalapak.com Tbk,,Retail trade
+2025-09-20,BUKK.JK,BUKK,PT Bukaka Teknik Utama Tbk,,Producer manufacturing
+2025-09-20,BULL.JK,BULL,PT Buana Lintas Lautan Tbk,,Transportation
+2025-09-20,BUMI.JK,BUMI,PT Bumi Resources Tbk Class A,,Energy minerals
+2025-09-20,BUVA.JK,BUVA,PT Bukit Uluwatu Villa Tbk,,Consumer services
+2025-09-20,BVIC.JK,BVIC,PT Bank Victoria International Tbk,,Finance
+2025-09-20,BWPT.JK,BWPT,PT Eagle High Plantations Tbk.,,Process industries
+2025-09-20,BYAN.JK,BYAN,PT Bayan Resources Tbk,,Energy minerals
+2025-09-20,CAKK.JK,CAKK,PT Cahayaputra Asa Keramik Tbk,,Consumer durables
+2025-09-20,CAMP.JK,CAMP,PT Campina Ice Cream Industry Tbk,,Consumer non-durables
+2025-09-20,CANI.JK,CANI,PT Capitol Nusantara Indonesia Tbk,,Transportation
+2025-09-20,CARE.JK,CARE,PT Metro Healthcare Indonesia Tbk,,Health services
+2025-09-20,CARS.JK,CARS,PT Industri dan Perdagangan Bintraco Dharma Tbk,,Retail trade
+2025-09-20,CASA.JK,CASA,PT Capital Financial Indonesia Tbk,,Finance
+2025-09-20,CASH.JK,CASH,PT.Cashlez Worldwide Indonesia Tbk,,Technology services
+2025-09-20,CASS.JK,CASS,Cahaya Aero Services Tbk,,Transportation
+2025-09-20,CBDK.JK,CBDK,PT Bangun Kosambi Sukses Tbk,,Finance
+2025-09-20,CBPE.JK,CBPE,PT Citra Buana Prasida Tbk,,Finance
+2025-09-20,CBRE.JK,CBRE,PT Cakra Buana Resources Energi Tbk,,Transportation
+2025-09-20,CBUT.JK,CBUT,PT Citra Borneo Utama Tbk,,Consumer non-durables
+2025-09-20,CCSI.JK,CCSI,PT Communication Cable Systems Indonesia Tbk,,Producer manufacturing
+2025-09-20,CDIA.JK,CDIA,PT Chandra Daya Investasi Tbk.,,Utilities
+2025-09-20,CEKA.JK,CEKA,PT Wilmar Cahaya Indonesia Tbk,,Consumer non-durables
+2025-09-20,CENT.JK,CENT,PT Centratama Telekomunikasi Indonesia Tbk,,Communications
+2025-09-20,CFIN.JK,CFIN,PT Clipan Finance Indonesia Tbk,,Finance
+2025-09-20,CGAS.JK,CGAS,PT Citra Nusantara Gemilang Tbk,,Utilities
+2025-09-20,CHEK.JK,CHEK,PT Diastika Biotekindo Tbk,,Health technology
+2025-09-20,CHEM.JK,CHEM,PT Chemstar Indonesia Tbk,,Process industries
+2025-09-20,CHIP.JK,CHIP,PT Pelita Teknologi Global Tbk,,Technology services
+2025-09-20,CINT.JK,CINT,PT Chitose Internasional Tbk,,Producer manufacturing
+2025-09-20,CITA.JK,CITA,PT Cita Mineral Investindo Tbk,,Consumer durables
+2025-09-20,CITY.JK,CITY,PT Natura City Developments Tbk,,Finance
+2025-09-20,CLAY.JK,CLAY,PT Citra Putra Realty Tbk,,Consumer services
+2025-09-20,CLEO.JK,CLEO,PT Sariguna Primatirta Tbk,,Consumer non-durables
+2025-09-20,CLPI.JK,CLPI,PT Colorpak Indonesia Tbk,,Process industries
+2025-09-20,CMNP.JK,CMNP,PT Citra Marga Nusaphala Persada Tbk,,Transportation
+2025-09-20,CMNT.JK,CMNT,PT Cemindo Gemilang Tbk,,Non-energy minerals
+2025-09-20,CMPP.JK,CMPP,PT AirAsia Indonesia Tbk,,Transportation
+2025-09-20,CMRY.JK,CMRY,PT Cisarua Mountain Dairy Tbk,,Distribution services
+2025-09-20,CNKO.JK,CNKO,PT Exploitasi Energi Indonesia Tbk Class A,,Energy minerals
+2025-09-20,CNMA.JK,CNMA,PT Nusantara Sejahtera Raya Tbk,,Consumer services
+2025-09-20,COAL.JK,COAL,PT Black Diamond Resources Tbk,,Energy minerals
+2025-09-20,COCO.JK,COCO,PT Wahana Interfood Nusantara Tbk,,Consumer non-durables
+2025-09-20,COIN.JK,COIN,PT Indokripto Koin Semesta Tbk,,Miscellaneous
+2025-09-20,CPIN.JK,CPIN,PT Charoen Pokphand Indonesia Tbk,,Process industries
+2025-09-20,CPRO.JK,CPRO,PT Central Proteina Prima Tbk,,Process industries
+2025-09-20,CRAB.JK,CRAB,PT Toba Surimi Industries Tbk,,Consumer non-durables
+2025-09-20,CRSN.JK,CRSN,PT Carsurin Tbk,,Commercial services
+2025-09-20,CSAP.JK,CSAP,PT Catur Sentosa Adiprana Tbk,,Distribution services
+2025-09-20,CSIS.JK,CSIS,PT Cahayasakti Investindo Sukses Tbk,,Finance
+2025-09-20,CSMI.JK,CSMI,PT Cipta Selera Murni Tbk,,Consumer services
+2025-09-20,CSRA.JK,CSRA,PT Cisadane Sawit Raya Tbk,,Process industries
+2025-09-20,CTBN.JK,CTBN,PT Citra Tubindo Tbk,,Industrial services
+2025-09-20,CTRA.JK,CTRA,PT Ciputra Development Tbk,,Finance
+2025-09-20,CTTH.JK,CTTH,PT Citatah Tbk,,Non-energy minerals
+2025-09-20,CUAN.JK,CUAN,PT Petrindo Jaya Kreasi Tbk,,Non-energy minerals
+2025-09-20,CYBR.JK,CYBR,PT ITSEC Asia Tbk,,Technology services
+2025-09-20,DAAZ.JK,DAAZ,PT Daaz Bara Lestari Tbk,,Distribution services
+2025-09-20,DADA.JK,DADA,PT Diamond Citra Propertindo Tbk,,Finance
+2025-09-20,DART.JK,DART,PT Duta Anggada Realty Tbk,,Consumer durables
+2025-09-20,DATA.JK,DATA,PT Remala Abadi Tbk,,Communications
+2025-09-20,DAYA.JK,DAYA,PT Duta Intidaya Tbk,,Retail trade
+2025-09-20,DCII.JK,DCII,PT DCI Indonesia Tbk,,Technology services
+2025-09-20,DEFI.JK,DEFI,PT Danasupra Erapacific Tbk,,Finance
+2025-09-20,DEPO.JK,DEPO,PT Caturkarda Depo Bangunan Tbk,,Retail trade
+2025-09-20,DEWA.JK,DEWA,PT Darma Henwa Tbk,,Energy minerals
+2025-09-20,DEWI.JK,DEWI,PT Dewi Shri Farmindo Tbk,,Retail trade
+2025-09-20,DFAM.JK,DFAM,PT Dafam Property Indonesia Tbk,,Consumer services
+2025-09-20,DGIK.JK,DGIK,PT Nusa Konstruksi Enjiniring Tbk,,Industrial services
+2025-09-20,DGNS.JK,DGNS,PT Diagnos Laboratorium Utama Tbk,,Health services
+2025-09-20,DGWG.JK,DGWG,PT Delta Giri Wacana Tbk,,Process industries
+2025-09-20,DIGI.JK,DIGI,PT Arkadia Digital Media Tbk,,Technology services
+2025-09-20,DILD.JK,DILD,PT Intiland Development Tbk,,Finance
+2025-09-20,DIVA.JK,DIVA,PT Distribusi Voucher Nusantara Tbk,,Technology services
+2025-09-20,DKFT.JK,DKFT,PT Central Omega Resources Tbk,,Non-energy minerals
+2025-09-20,DKHH.JK,DKHH,Pt Cipta Sarana Medika Tbk.,,Health services
+2025-09-20,DLTA.JK,DLTA,PT Delta Djakarta Tbk,,Consumer non-durables
+2025-09-20,DMAS.JK,DMAS,PT Puradelta Lestari Tbk,,Finance
+2025-09-20,DMMX.JK,DMMX,PT Digital Mediatama Maxima Tbk,,Commercial services
+2025-09-20,DMND.JK,DMND,PT Diamond Food Indonesia Tbk,,Consumer non-durables
+2025-09-20,DNAR.JK,DNAR,PT Bank Oke Indonesia Tbk,,Finance
+2025-09-20,DNET.JK,DNET,PT Indoritel Makmur Internasional Tbk,,Communications
+2025-09-20,DOID.JK,DOID,PT BUMA Internasional Grup Tbk,,Energy minerals
+2025-09-20,DOOH.JK,DOOH,PT Era Media Sejahtera Tbk,,Commercial services
+2025-09-20,DOSS.JK,DOSS,PT Global Sukses Digital Tbk,,Retail trade
+2025-09-20,DPNS.JK,DPNS,PT Duta Pertiwi Nusantara Tbk,,Process industries
+2025-09-20,DPUM.JK,DPUM,PT Dua Putra Utama Makmur Tbk,,Distribution services
+2025-09-20,DRMA.JK,DRMA,PT Dharma Polimetal Tbk,,Producer manufacturing
+2025-09-20,DSFI.JK,DSFI,PT Dharma Samudera Fishing Industries Tbk,,Consumer non-durables
+2025-09-20,DSNG.JK,DSNG,PT Dharma Satya Nusantara Tbk,,Non-energy minerals
+2025-09-20,DSSA.JK,DSSA,PT Dian Swastatika Sentosa Tbk,,Energy minerals
+2025-09-20,DUTI.JK,DUTI,PT Duta Pertiwi Tbk,,Finance
+2025-09-20,DVLA.JK,DVLA,PT Darya-Varia Laboratoria Tbk,,Health technology
+2025-09-20,DWGL.JK,DWGL,PT Dwi Guna Laksana Tbk,,Energy minerals
+2025-09-20,DYAN.JK,DYAN,PT Dyandra Media International Tbk,,Commercial services
+2025-09-20,EAST.JK,EAST,PT Eastparc Hotel Tbk,,Consumer services
+2025-09-20,ECII.JK,ECII,PT Electronic City Indonesia Tbk,,Retail trade
+2025-09-20,EDGE.JK,EDGE,PT Indointernet Tbk,,Technology services
+2025-09-20,EKAD.JK,EKAD,PT Ekadharma International Tbk,,Process industries
+2025-09-20,ELIT.JK,ELIT,PT Data Sinergitama Jaya Tbk,,Technology services
+2025-09-20,ELPI.JK,ELPI,PT Pelayaran Nasional Ekalya Purnamasari Tbk,,Transportation
+2025-09-20,ELSA.JK,ELSA,PT Elnusa Tbk,,Energy minerals
+2025-09-20,ELTY.JK,ELTY,PT Bakrieland Development Tbk Class A,,Finance
+2025-09-20,EMAS.JK,EMAS,MERDEKA GOLD RESOURCES TBK,,Non-energy minerals
+2025-09-20,EMDE.JK,EMDE,PT Megapolitan Developments Tbk,,Finance
+2025-09-20,EMTK.JK,EMTK,PT Elang Mahkota Teknologi Tbk,,Consumer services
+2025-09-20,ENAK.JK,ENAK,PT Champ Resto Indonesia Tbk,,Consumer services
+2025-09-20,ENRG.JK,ENRG,PT Energi Mega Persada Tbk,,Energy minerals
+2025-09-20,ENZO.JK,ENZO,PT Morenzo Abadi Perkasa Tbk,,Consumer non-durables
+2025-09-20,EPAC.JK,EPAC,PT Megalestari Epack Sentosaraya Tbk,,Technology services
+2025-09-20,EPMT.JK,EPMT,PT Enseval Putera Megatrading Tbk,,Distribution services
+2025-09-20,ERAA.JK,ERAA,PT Erajaya Swasembada Tbk,,Distribution services
+2025-09-20,ERAL.JK,ERAL,PT Sinar Eka Selaras Tbk,,Retail trade
+2025-09-20,ERTX.JK,ERTX,PT Eratex Djaja Tbk,,Process industries
+2025-09-20,ESIP.JK,ESIP,PT Sinergi Inti Plastindo Tbk,,Producer manufacturing
+2025-09-20,ESSA.JK,ESSA,PT ESSA Industries Indonesia Tbk,,Energy minerals
+2025-09-20,ESTA.JK,ESTA,PT Esta Multi Usaha Tbk,,Consumer services
+2025-09-20,ESTI.JK,ESTI,PT Ever Shine Textile Tbk,,Process industries
+2025-09-20,EURO.JK,EURO,PT Estee Gold Feet Tbk,,Consumer non-durables
+2025-09-20,EXCL.JK,EXCL,PT XLSMART Telecom Sejahtera Tbk,,Communications
+2025-09-20,FAPA.JK,FAPA,PT FAP Agri Tbk,,Consumer non-durables
+2025-09-20,FAST.JK,FAST,PT Fast Food Indonesia Tbk,,Consumer services
+2025-09-20,FILM.JK,FILM,PT MD Entertainment Tbk,,Consumer services
+2025-09-20,FIRE.JK,FIRE,PT Alfa Energi Investama Tbk,,Energy minerals
+2025-09-20,FISH.JK,FISH,PT FKS Multi Agro Tbk,,Consumer non-durables
+2025-09-20,FITT.JK,FITT,PT Hotel Fitra International Tbk,,Consumer services
+2025-09-20,FLMC.JK,FLMC,PT Falmaco Nonwoven Industri Tbk,,Process industries
+2025-09-20,FMII.JK,FMII,PT Fortune Mate Indonesia Tbk,,Finance
+2025-09-20,FOLK.JK,FOLK,PT Multi Garam Utama Tbk,,Distribution services
+2025-09-20,FOOD.JK,FOOD,PT Sentra Food Indonesia Tbk,,Distribution services
+2025-09-20,FORE.JK,FORE,PT Fore Kopi Indonesia Tbk,,Consumer services
+2025-09-20,FORU.JK,FORU,"PT Fortune Indonesia, Tbk",,Commercial services
+2025-09-20,FPNI.JK,FPNI,PT Lotte Chemical Titan Tbk,,Process industries
+2025-09-20,FUJI.JK,FUJI,PT Fuji Finance Indonesia Tbk.,,Finance
+2025-09-20,FUTR.JK,FUTR,PT Futura Energi Global Tbk,,Commercial services
+2025-09-20,FWCT.JK,FWCT,PT Wijaya Cahaya Timber Tbk,,Non-energy minerals
+2025-09-20,GDST.JK,GDST,PT Gunawan Dianjaya Steel Tbk,,Non-energy minerals
+2025-09-20,GDYR.JK,GDYR,PT Goodyear Indonesia Tbk,,Consumer durables
+2025-09-20,GEMA.JK,GEMA,PT Gema Grahasarana Tbk,,Producer manufacturing
+2025-09-20,GEMS.JK,GEMS,PT Golden Energy Mines Tbk,,Energy minerals
+2025-09-20,GGRM.JK,GGRM,PT Gudang Garam Tbk,,Consumer non-durables
+2025-09-20,GGRP.JK,GGRP,PT Gunung Raja Paksi Tbk,,Non-energy minerals
+2025-09-20,GHON.JK,GHON,PT Gihon Telekomunikasi Indonesia,,Communications
+2025-09-20,GIAA.JK,GIAA,PT Garuda Indonesia (Persero) Tbk Class B,,Transportation
+2025-09-20,GJTL.JK,GJTL,PT Gajah Tunggal Tbk,,Consumer durables
+2025-09-20,GLOB.JK,GLOB,PT Globe Kita Terang Tbk,,Retail trade
+2025-09-20,GLVA.JK,GLVA,PT Galva Technologies Tbk,,Distribution services
+2025-09-20,GMFI.JK,GMFI,PT Garuda Maintenance Facility Aero Asia Tbk,,Transportation
+2025-09-20,GMTD.JK,GMTD,PT Gowa Makassar Tourism Development Tbk,,Finance
+2025-09-20,GOLD.JK,GOLD,PT Visi Telekomunikasi Infrastruktur Tbk,,Finance
+2025-09-20,GOLF.JK,GOLF,PT Intra Golflink Resorts Tbk,,Commercial services
+2025-09-20,GOOD.JK,GOOD,PT Garudafood Putra Putri Jaya Tbk,,Consumer non-durables
+2025-09-20,GOTO.JK,GOTO,PT GoTo Gojek Tokopedia Tbk,,Technology services
+2025-09-20,GPRA.JK,GPRA,PT Perdana Gapuraprima Tbk,,Consumer durables
+2025-09-20,GPSO.JK,GPSO,PT Geoprima Solusi Tbk,,Technology services
+2025-09-20,GRIA.JK,GRIA,PT Ingria Pratama Capitalindo Tbk,,Finance
+2025-09-20,GRPH.JK,GRPH,PT Griptha Putra Persada Tbk,,Consumer services
+2025-09-20,GRPM.JK,GRPM,PT Graha Prima Mentari Tbk,,Distribution services
+2025-09-20,GSMF.JK,GSMF,PT Equity Development Investment Tbk Class A,,Finance
+2025-09-20,GTBO.JK,GTBO,PT Garda Tujuh Buana Tbk,,Energy minerals
+2025-09-20,GTRA.JK,GTRA,PT Grahaprima Suksesmandiri Tbk,,Transportation
+2025-09-20,GTSI.JK,GTSI,PT GTS Internasional,,Transportation
+2025-09-20,GULA.JK,GULA,PT Aman Agrindo Tbk,,Process industries
+2025-09-20,GUNA.JK,GUNA,PT Gunanusa Eramandiri Tbk,,Consumer non-durables
+2025-09-20,GWSA.JK,GWSA,PT Greenwood Sejahtera Tbk,,Finance
+2025-09-20,GZCO.JK,GZCO,PT Gozco Plantations Tbk,,Process industries
+2025-09-20,HADE.JK,HADE,PT Himalaya Energi Perkasa Tbk,,Distribution services
+2025-09-20,HAIS.JK,HAIS,PT Hasnur Internasional Shipping Tbk,,Transportation
+2025-09-20,HAJJ.JK,HAJJ,PT Arsy Buana Travelindo Tbk,,Consumer services
+2025-09-20,HALO.JK,HALO,PT Haloni Jane Tbk,,Producer manufacturing
+2025-09-20,HATM.JK,HATM,PT Habco Trans Maritima Tbk,,Transportation
+2025-09-20,HBAT.JK,HBAT,PT Minahasa Membangun Hebat Tbk,,Finance
+2025-09-20,HDFA.JK,HDFA,PT Radana Bhaskara Finance Tbk,,Finance
+2025-09-20,HDIT.JK,HDIT,PT Hensel Davest Indonesia Tbk,,Commercial services
+2025-09-20,HEAL.JK,HEAL,PT Medikaloka Hermina Tbk,,Health services
+2025-09-20,HELI.JK,HELI,PT Jaya Trishindo Tbk,,Transportation
+2025-09-20,HERO.JK,HERO,PT DFI Retail Nusantara Tbk,,Retail trade
+2025-09-20,HEXA.JK,HEXA,PT Hexindo Adiperkasa Tbk,,Distribution services
+2025-09-20,HGII.JK,HGII,PT Hero Global Investment Tbk,,Utilities
+2025-09-20,HILL.JK,HILL,PT Hillcon Tbk,,Non-energy minerals
+2025-09-20,HMSP.JK,HMSP,PT Hanjaya Mandala Sampoerna Tbk,,Consumer non-durables
+2025-09-20,HOKI.JK,HOKI,PT Buyung Poetra Sembada Tbk,,Process industries
+2025-09-20,HOMI.JK,HOMI,PT Grand House Mulia Tbk,,Finance
+2025-09-20,HOPE.JK,HOPE,PT Harapan Duta Pertiwi Tbk,,Producer manufacturing
+2025-09-20,HRME.JK,HRME,PT Menteng Heritage Realty Tbk,,Consumer services
+2025-09-20,HRTA.JK,HRTA,PT Hartadinata Abadi Tbk,,Consumer durables
+2025-09-20,HRUM.JK,HRUM,PT Harum Energy Tbk,,Energy minerals
+2025-09-20,HUMI.JK,HUMI,PT Humpuss Maritim Internasional Tbk,,Transportation
+2025-09-20,HYGN.JK,HYGN,PT Ecocare Indo Pasifik Tbk,,Commercial services
+2025-09-20,IATA.JK,IATA,PT MNC Energy Investments Tbk,,Distribution services
+2025-09-20,IBFN.JK,IBFN,PT Intan Baru Prana Tbk,,Finance
+2025-09-20,IBOS.JK,IBOS,PT Indo Boga Sukses Tbk,,Consumer services
+2025-09-20,IBST.JK,IBST,PT Inti Bangun Sejahtera Tbk,,Industrial services
+2025-09-20,ICBP.JK,ICBP,PT Indofood CBP Sukses Makmur Tbk,,Consumer non-durables
+2025-09-20,ICON.JK,ICON,PT Island Concepts Indonesia Tbk,,Consumer services
+2025-09-20,IDEA.JK,IDEA,PT Idea Indonesia Akademi Tbk,,Commercial services
+2025-09-20,IDPR.JK,IDPR,PT Indonesia Pondasi Raya Tbk,,Industrial services
+2025-09-20,IFII.JK,IFII,PT Indonesia Fibreboard Industry Tbk,,Non-energy minerals
+2025-09-20,IFSH.JK,IFSH,PT Ifishdeco Tbk,,Non-energy minerals
+2025-09-20,IGAR.JK,IGAR,PT Champion Pacific Indonesia Tbk,,Process industries
+2025-09-20,IKAI.JK,IKAI,PT Intikeramik Alamasri Industri Tbk,,Producer manufacturing
+2025-09-20,IKAN.JK,IKAN,PT Era Mandiri Cemerlang Tbk,,Consumer non-durables
+2025-09-20,IKBI.JK,IKBI,PT Sumi Indo Kabel Tbk,,Electronic technology
+2025-09-20,IKPM.JK,IKPM,PT Ikapharmindo Putramas Tbk,,Health technology
+2025-09-20,IMAS.JK,IMAS,PT Indomobil Sukses Internasional Tbk,,Consumer durables
+2025-09-20,IMJS.JK,IMJS,PT Indomobil Multi Jasa Tbk,,Finance
+2025-09-20,IMPC.JK,IMPC,PT Impack Pratama Industri Tbk,,Producer manufacturing
+2025-09-20,INAI.JK,INAI,PT Indal Aluminium Industry Tbk,,Non-energy minerals
+2025-09-20,INCF.JK,INCF,PT Indo Komoditi Korpora Tbk Class A,,Producer manufacturing
+2025-09-20,INCI.JK,INCI,PT Intanwijaya Internasional Tbk,,Process industries
+2025-09-20,INCO.JK,INCO,PT Vale Indonesia Tbk,,Non-energy minerals
+2025-09-20,INDF.JK,INDF,PT Indofood Sukses Makmur Tbk,,Consumer non-durables
+2025-09-20,INDO.JK,INDO,PT Royalindo Investa Wijaya Tbk,,Finance
+2025-09-20,INDR.JK,INDR,PT Indo-Rama Synthetics Tbk,,Process industries
+2025-09-20,INDS.JK,INDS,PT Indospring Tbk,,Producer manufacturing
+2025-09-20,INDX.JK,INDX,PT Tanah Laut Tbk,,Technology services
+2025-09-20,INDY.JK,INDY,PT Indika Energy Tbk,,Energy minerals
+2025-09-20,INET.JK,INET,PT Sinergi Inti Andalan Prima Tbk,,Communications
+2025-09-20,INKP.JK,INKP,PT Indah Kiat Pulp & Paper Tbk,,Process industries
+2025-09-20,INOV.JK,INOV,PT Inocycle Technology Group Tbk,,Process industries
+2025-09-20,INPC.JK,INPC,PT Bank Artha Graha Internasional Tbk,,Finance
+2025-09-20,INPP.JK,INPP,PT Indonesian Paradise Property Tbk,,Consumer services
+2025-09-20,INPS.JK,INPS,PT Indah Prakasa Sentosa Tbk,,Utilities
+2025-09-20,INRU.JK,INRU,PT Toba Pulp Lestari Tbk,,Process industries
+2025-09-20,INTA.JK,INTA,PT Intraco Penta Tbk,,Distribution services
+2025-09-20,INTD.JK,INTD,PT Inter-Delta Tbk,,Consumer durables
+2025-09-20,INTP.JK,INTP,PT Indocement Tunggal Prakarsa Tbk,,Non-energy minerals
+2025-09-20,IOTF.JK,IOTF,PT Sumber Sinergi Makmur Tbk,,Distribution services
+2025-09-20,IPAC.JK,IPAC,PT Era Graharealty Tbk,,Finance
+2025-09-20,IPCC.JK,IPCC,PT Indonesia Kendaraan Terminal Tbk,,Transportation
+2025-09-20,IPCM.JK,IPCM,PT Jasa Armada Indonesia Tbk,,Transportation
+2025-09-20,IPOL.JK,IPOL,PT Indopoly Swakarsa Industry Tbk,,Process industries
+2025-09-20,IPTV.JK,IPTV,PT MNC Vision Networks Tbk Class A,,Consumer services
+2025-09-20,IRRA.JK,IRRA,PT Itama Ranoraya Tbk,,Distribution services
+2025-09-20,IRSX.JK,IRSX,PT Aviana Sinar Abadi Tbk,,Technology services
+2025-09-20,ISAP.JK,ISAP,PT Isra Presisi Indonesia Tbk,,Producer manufacturing
+2025-09-20,ISAT.JK,ISAT,PT Indosat Tbk Class B,,Communications
+2025-09-20,ISEA.JK,ISEA,PT Indo American Seafoods Tbk,,Consumer non-durables
+2025-09-20,ISSP.JK,ISSP,PT Steel Pipe Industry of Indonesia Tbk,,Non-energy minerals
+2025-09-20,ITIC.JK,ITIC,PT Indonesian Tobacco Tbk,,Consumer non-durables
+2025-09-20,ITMA.JK,ITMA,PT Sumber Energi Andalan Tbk,,Energy minerals
+2025-09-20,ITMG.JK,ITMG,PT Indo Tambangraya Megah Tbk,,Energy minerals
+2025-09-20,JARR.JK,JARR,PT Jhonlin Agro Raya Tbk,,Process industries
+2025-09-20,JAST.JK,JAST,PT Jasnita Telekomindo Tbk,,Communications
+2025-09-20,JATI.JK,JATI,PT Informasi Teknologi Indonesia Tbk,,Technology services
+2025-09-20,JAWA.JK,JAWA,PT Jaya Agra Wattie Tbk,,Process industries
+2025-09-20,JAYA.JK,JAYA,PT Armada Berjaya Trans Tbk,,Transportation
+2025-09-20,JECC.JK,JECC,PT Jembo Cable Co. Tbk,,Producer manufacturing
+2025-09-20,JGLE.JK,JGLE,PT Graha Andrasentra Propertindo Tbk,,Finance
+2025-09-20,JIHD.JK,JIHD,PT Jakarta International Hotels & Development Tbk,,Finance
+2025-09-20,JKON.JK,JKON,PT Jaya Konstruksi Manggala Pratama Tbk,,Industrial services
+2025-09-20,JMAS.JK,JMAS,PT Asuransi Jiwa Syariah Jasa Mitra Abadi Tbk,,Finance
+2025-09-20,JPFA.JK,JPFA,PT Japfa Comfeed Indonesia Tbk Class A,,Process industries
+2025-09-20,JRPT.JK,JRPT,PT Jaya Real Property Tbk,,Finance
+2025-09-20,JSMR.JK,JSMR,PT Jasa Marga (Persero) Tbk Class B,,Transportation
+2025-09-20,JSPT.JK,JSPT,PT Jakarta Setiabudi Internasional Tbk,,Consumer services
+2025-09-20,JTPE.JK,JTPE,PT Jasuindo Tiga Perkasa Tbk,,Commercial services
+2025-09-20,KAEF.JK,KAEF,PT Kimia Farma Tbk Class B,,Health technology
+2025-09-20,KAQI.JK,KAQI,PT Jantra Grupo Indonesia Tbk,,Consumer services
+2025-09-20,KARW.JK,KARW,PT Meratus Jasa Prima Tbk,,Transportation
+2025-09-20,KBAG.JK,KBAG,PT Karya Bersama Anugerah Tbk,,Finance
+2025-09-20,KBLI.JK,KBLI,PT KMI Wire & Cable Tbk Class A,,Producer manufacturing
+2025-09-20,KBLM.JK,KBLM,PT Kabelindo Murni Tbk Class A,,Producer manufacturing
+2025-09-20,KBLV.JK,KBLV,PT First Media Tbk,,Consumer services
+2025-09-20,KDSI.JK,KDSI,PT Kedawung Setia Industrial Tbk,,Process industries
+2025-09-20,KDTN.JK,KDTN,PT Puri Sentul Permai Tbk,,Consumer services
+2025-09-20,KEEN.JK,KEEN,PT Kencana Energi Lestari Tbk,,Utilities
+2025-09-20,KEJU.JK,KEJU,PT Mulia Boga Raya Tbk,,Consumer non-durables
+2025-09-20,KETR.JK,KETR,PT Ketrosden Triasmitra Tbk,,Industrial services
+2025-09-20,KICI.JK,KICI,PT Kedaung Indah Can Tbk,,Consumer durables
+2025-09-20,KIJA.JK,KIJA,PT Kawasan Industri Jababeka Tbk Class A,,Finance
+2025-09-20,KING.JK,KING,PT Hoffmen Cleanindo Tbk,,Commercial services
+2025-09-20,KINO.JK,KINO,PT Kino Indonesia Tbk,,Consumer non-durables
+2025-09-20,KIOS.JK,KIOS,PT Kioson Komersial Indonesia Tbk,,Retail trade
+2025-09-20,KJEN.JK,KJEN,PT Krida Jaringan Nusantara Tbk,,Transportation
+2025-09-20,KKES.JK,KKES,PT Kusuma Kemindo Sentosa Tbk,,Distribution services
+2025-09-20,KKGI.JK,KKGI,PT Resource Alam Indonesia Tbk,,Energy minerals
+2025-09-20,KLAS.JK,KLAS,PT Pelayaran Kurnia Lautan Semesta Tbk,,Transportation
+2025-09-20,KLBF.JK,KLBF,PT Kalbe Farma Tbk,,Health technology
+2025-09-20,KLIN.JK,KLIN,PT Klinko Karya Imaji Tbk,,Consumer non-durables
+2025-09-20,KMDS.JK,KMDS,PT Kurniamitra Duta Sentosa Tbk,,Distribution services
+2025-09-20,KMTR.JK,KMTR,PT Kirana Megatara Tbk,,Producer manufacturing
+2025-09-20,KOBX.JK,KOBX,PT Kobexindo Tractors Tbk,,Distribution services
+2025-09-20,KOCI.JK,KOCI,PT Kokoh Exa Nusantara Tbk,,Finance
+2025-09-20,KOIN.JK,KOIN,PT Kokoh Inti Arebama Tbk,,Distribution services
+2025-09-20,KOKA.JK,KOKA,PT Koka Indonesia Tbk,,Industrial services
+2025-09-20,KONI.JK,KONI,PT Perdana Bangun Pusaka Tbk,,Retail trade
+2025-09-20,KOPI.JK,KOPI,PT Mitra Energi Persada Tbk,,Distribution services
+2025-09-20,KOTA.JK,KOTA,PT DMS Propertindo Tbk,,Finance
+2025-09-20,KPIG.JK,KPIG,PT MNC Tourism Indonesia Tbk,,Finance
+2025-09-20,KRAS.JK,KRAS,PT Krakatau Steel (Persero) Tbk Class B,,Non-energy minerals
+2025-09-20,KREN.JK,KREN,PT Quantum Clovera Investama Tbk,,Finance
+2025-09-20,KRYA.JK,KRYA,PT Bangun Karya Perkasa Jaya Tbk,,Producer manufacturing
+2025-09-20,KSIX.JK,KSIX,PT Kentanix Supra International Tbk,,Consumer durables
+2025-09-20,KUAS.JK,KUAS,PT Ace Oldfields Tbk,,Producer manufacturing
+2025-09-20,LABS.JK,LABS,PT UBC Medical Indonesia Tbk,,Distribution services
+2025-09-20,LAJU.JK,LAJU,PT Jasa Berdikari Logistics Tbk,,Transportation
+2025-09-20,LAND.JK,LAND,PT Trimitra Propertindo Tbk,,Consumer durables
+2025-09-20,LAPD.JK,LAPD,PT Leyand International Tbk,,Utilities
+2025-09-20,LCKM.JK,LCKM,PT LCK Global Kedaton Tbk,,Industrial services
+2025-09-20,LEAD.JK,LEAD,PT Logindo Samudramakmur Tbk,,Industrial services
+2025-09-20,LFLO.JK,LFLO,PT Imago Mulia Persada Tbk,,Commercial services
+2025-09-20,LIFE.JK,LIFE,PT MSIG Life Insurance Indonesia Tbk,,Finance
+2025-09-20,LINK.JK,LINK,PT Link Net Tbk,,Communications
+2025-09-20,LION.JK,LION,PT Lion Metal Works Tbk,,Producer manufacturing
+2025-09-20,LIVE.JK,LIVE,PT Homeco Victoria Makmur Tbk,,Distribution services
+2025-09-20,LMAX.JK,LMAX,PT Lupromax Pelumas Indonesia Tbk,,Process industries
+2025-09-20,LMPI.JK,LMPI,PT Langgeng Makmur Industri Tbk,,Consumer durables
+2025-09-20,LOPI.JK,LOPI,PT Logisticsplus International Tbk,,Transportation
+2025-09-20,LPCK.JK,LPCK,PT Lippo Cikarang Tbk,,Finance
+2025-09-20,LPGI.JK,LPGI,PT Lippo General Insurance Tbk,,Finance
+2025-09-20,LPIN.JK,LPIN,PT Multi Prima Sejahtera Tbk,,Electronic technology
+2025-09-20,LPKR.JK,LPKR,PT Lippo Karawaci Tbk,,Finance
+2025-09-20,LPLI.JK,LPLI,PT Star Pacific Tbk Class A,,Technology services
+2025-09-20,LPPF.JK,LPPF,PT Matahari Department Store Tbk Class A,,Retail trade
+2025-09-20,LPPS.JK,LPPS,PT Lenox Pasifik InvestamaTbk Class A,,Finance
+2025-09-20,LRNA.JK,LRNA,PT Eka Sari Lorena Transport Tbk,,Transportation
+2025-09-20,LSIP.JK,LSIP,PT Perusahaan Perkebunan London Sumatra Indonesia Tbk,,Process industries
+2025-09-20,LTLS.JK,LTLS,PT Lautan Luas Tbk,,Distribution services
+2025-09-20,LUCK.JK,LUCK,PT Sentral Mitra Informatika Tbk,,Distribution services
+2025-09-20,LUCY.JK,LUCY,PT Lima Dua Lima Tiga Tbk,,Commercial services
+2025-09-20,MAHA.JK,MAHA,PT Mandiri Herindo Adiperkasa Tbk,,Energy minerals
+2025-09-20,MAIN.JK,MAIN,PT Malindo Feedmill Tbk,,Process industries
+2025-09-20,MANG.JK,MANG,PT Manggung Polahraya Tbk,,Consumer durables
+2025-09-20,MAPA.JK,MAPA,PT MAP Aktif Adiperkasa Tbk,,Retail trade
+2025-09-20,MAPB.JK,MAPB,PT Map Boga Adiperkasa Tbk,,Consumer services
+2025-09-20,MAPI.JK,MAPI,PT Mitra Adiperkasa Tbk,,Retail trade
+2025-09-20,MARI.JK,MARI,PT Mahaka Radio Integra Tbk,,Consumer services
+2025-09-20,MARK.JK,MARK,PT Mark Dynamics Indonesia Tbk,,Non-energy minerals
+2025-09-20,MASB.JK,MASB,PT Bank Multiarta Sentosa Tbk,,Finance
+2025-09-20,MAXI.JK,MAXI,PT Maxindo Karya Anugerah Tbk,,Consumer non-durables
+2025-09-20,MAYA.JK,MAYA,PT Bank Mayapada Internasional Tbk Class A,,Finance
+2025-09-20,MBAP.JK,MBAP,PT Mitrabara Adiperdana Tbk,,Energy minerals
+2025-09-20,MBMA.JK,MBMA,PT Merdeka Battery Materials Tbk,,Non-energy minerals
+2025-09-20,MBSS.JK,MBSS,PT Mitrabahtera Segara Sejati Tbk,,Transportation
+2025-09-20,MBTO.JK,MBTO,PT Martina Berto Tbk,,Consumer non-durables
+2025-09-20,MCAS.JK,MCAS,PT M Cash Integrasi Tbk,,Technology services
+2025-09-20,MCOL.JK,MCOL,PT Prima Andalan Mandiri Tbk,,Energy minerals
+2025-09-20,MCOR.JK,MCOR,PT Bank China Construction Bank Indonesia Tbk,,Finance
+2025-09-20,MDIA.JK,MDIA,PT Intermedia Capital Tbk,,Consumer services
+2025-09-20,MDIY.JK,MDIY,PT Daya Intiguna Yasa Tbk,,Retail trade
+2025-09-20,MDKA.JK,MDKA,PT Merdeka Copper Gold Tbk,,Non-energy minerals
+2025-09-20,MDKI.JK,MDKI,PT Emdeki Utama Tbk,,Process industries
+2025-09-20,MDLA.JK,MDLA,PT Medela Potentia Tbk,,Distribution services
+2025-09-20,MDLN.JK,MDLN,PT Modernland Realty Tbk Class A,,Finance
+2025-09-20,MDRN.JK,MDRN,PT Modern Internasional Tbk,,Retail trade
+2025-09-20,MEDC.JK,MEDC,PT Medco Energi Internasional Tbk,,Energy minerals
+2025-09-20,MEDS.JK,MEDS,PT Hetzer Medical Indonesia Tbk,,Health technology
+2025-09-20,MEGA.JK,MEGA,PT Bank Mega Tbk,,Finance
+2025-09-20,MEJA.JK,MEJA,PT Harta Djaya Karya Tbk,,Commercial services
+2025-09-20,MENN.JK,MENN,PT Menn Teknologi Indonesia Tbk,,Finance
+2025-09-20,MERI.JK,MERI,PT Merry Riana Edukasi Tbk,,Commercial services
+2025-09-20,MERK.JK,MERK,PT Merck Tbk,,Health technology
+2025-09-20,MFIN.JK,MFIN,PT Mandala Multifinance Tbk,,Finance
+2025-09-20,MGLV.JK,MGLV,PT Panca Anugrah Wisesa Tbk,,Consumer durables
+2025-09-20,MGNA.JK,MGNA,PT Magna Investama Mandiri Tbk,,Finance
+2025-09-20,MGRO.JK,MGRO,PT Mahkota Group Tbk,,Process industries
+2025-09-20,MHKI.JK,MHKI,PT Multi Hanna Kreasindo Tbk,,Industrial services
+2025-09-20,MICE.JK,MICE,PT Multi Indocitra Tbk,,Distribution services
+2025-09-20,MIDI.JK,MIDI,PT Midi Utama Indonesia Tbk,,Retail trade
+2025-09-20,MIKA.JK,MIKA,PT Mitra Keluarga Karyasehat Tbk,,Health services
+2025-09-20,MINA.JK,MINA,PT Sanurhasta Mitra Tbk.,,Consumer services
+2025-09-20,MINE.JK,MINE,PT Sinar Terang Mandiri TBK,,Non-energy minerals
+2025-09-20,MIRA.JK,MIRA,PT Mitra International Resources Tbk,,Industrial services
+2025-09-20,MITI.JK,MITI,PT Mitra Investindo Tbk Class A,,Transportation
+2025-09-20,MKAP.JK,MKAP,PT Multikarya Asia Pasifik Raya Tbk,,Producer manufacturing
+2025-09-20,MKPI.JK,MKPI,PT Metropolitan Kentjana Tbk,,Finance
+2025-09-20,MKTR.JK,MKTR,PT Menthobi Karyatama Raya Tbk,,Commercial services
+2025-09-20,MLBI.JK,MLBI,PT Multi Bintang Indonesia Tbk,,Consumer non-durables
+2025-09-20,MLIA.JK,MLIA,PT Mulia Industrindo Tbk,,Process industries
+2025-09-20,MLPL.JK,MLPL,PT Multipolar Tbk Class A,,Retail trade
+2025-09-20,MLPT.JK,MLPT,PT Multipolar Technology Tbk,,Technology services
+2025-09-20,MMIX.JK,MMIX,PT Multi Medika Internasional Tbk,,Distribution services
+2025-09-20,MMLP.JK,MMLP,PT Mega Manunggal Property Tbk,,Finance
+2025-09-20,MNCN.JK,MNCN,PT Media Nusantara Citra Tbk,,Commercial services
+2025-09-20,MOLI.JK,MOLI,PT Madusari Murni Indah Tbk,,Process industries
+2025-09-20,MORA.JK,MORA,PT Mora Telematika Indonesia Tbk,,Communications
+2025-09-20,MPIX.JK,MPIX,PT Mitra Pedagang Indonesia Tbk,,Commercial services
+2025-09-20,MPMX.JK,MPMX,PT Mitra Pinasthika Mustika Tbk,,Distribution services
+2025-09-20,MPOW.JK,MPOW,PT Megapower Makmur Tbk,,Utilities
+2025-09-20,MPPA.JK,MPPA,PT Matahari Putra Prima Tbk,,Retail trade
+2025-09-20,MPRO.JK,MPRO,PT Maha Properti Indonesia Tbk,,Finance
+2025-09-20,MPXL.JK,MPXL,PT MPX Logistics International Tbk,,Transportation
+2025-09-20,MRAT.JK,MRAT,PT Mustika Ratu Tbk,,Distribution services
+2025-09-20,MREI.JK,MREI,PT Maskapai Reasuransi Indonesia Tbk,,Finance
+2025-09-20,MSIE.JK,MSIE,PT Multisarana Intan Eduka Tbk,,Finance
+2025-09-20,MSIN.JK,MSIN,PT MNC Digital Entertainment Tbk,,Consumer services
+2025-09-20,MSJA.JK,MSJA,PT Multi Spunindo Jaya Tbk,,Process industries
+2025-09-20,MSKY.JK,MSKY,PT MNC Vision Network,,Communications
+2025-09-20,MSTI.JK,MSTI,PT Mastersystem Infotama Tbk,,Technology services
+2025-09-20,MTDL.JK,MTDL,PT Metrodata Electronics Tbk,,Electronic technology
+2025-09-20,MTEL.JK,MTEL,PT Dayamitra Telekomunikasi Tbk,,Communications
+2025-09-20,MTFN.JK,MTFN,PT Capitalinc Investment Tbk Class A,,Finance
+2025-09-20,MTLA.JK,MTLA,PT Metropolitan Land Tbk,,Finance
+2025-09-20,MTMH.JK,MTMH,PT Murni Sadar Tbk,,Health services
+2025-09-20,MTPS.JK,MTPS,PT Meta Epsi Tbk,,Industrial services
+2025-09-20,MTWI.JK,MTWI,PT Malacca Trust Wuwungan Insurance Tbk,,Finance
+2025-09-20,MUTU.JK,MUTU,PT Mutuagung Lestari Tbk,,Commercial services
+2025-09-20,MYOH.JK,MYOH,PT Samindo Resources Tbk,,Energy minerals
+2025-09-20,MYOR.JK,MYOR,PT Mayora Indah Tbk,,Consumer non-durables
+2025-09-20,NAIK.JK,NAIK,PT Adiwarna Anugerah Abadi Tbk,,Commercial services
+2025-09-20,NANO.JK,NANO,PT Nanotech Indonesia Global Tbk,,Commercial services
+2025-09-20,NASA.JK,NASA,PT Andalan Perkasa Abadi Tbk,,Finance
+2025-09-20,NASI.JK,NASI,PT Wahana Inti Makmur Tbk,,Consumer non-durables
+2025-09-20,NATO.JK,NATO,PT Surya Permata Andalan Tbk,,Consumer services
+2025-09-20,NAYZ.JK,NAYZ,PT Hassana Boga Sejahtera Tbk,,Consumer non-durables
+2025-09-20,NCKL.JK,NCKL,PT Trimegah Bangun Persada Tbk,,Non-energy minerals
+2025-09-20,NELY.JK,NELY,PT Pelayaran Nelly Dwi Putri Tbk,,Transportation
+2025-09-20,NEST.JK,NEST,PT Esta Indonesia Tbk,,Process industries
+2025-09-20,NETV.JK,NETV,PT MDTV Media Technologies Tbk,,Commercial services
+2025-09-20,NFCX.JK,NFCX,PT NFC Indonesia Tbk,,Technology services
+2025-09-20,NICE.JK,NICE,PT Adhi Kartiko Pratama Tbk,,Non-energy minerals
+2025-09-20,NICK.JK,NICK,PT Charnic Capital Tbk,,Finance
+2025-09-20,NICL.JK,NICL,PT PAM Mineral Tbk,,Non-energy minerals
+2025-09-20,NIKL.JK,NIKL,PT Pelat Timah Nusantara Tbk,,Process industries
+2025-09-20,NIRO.JK,NIRO,PT City Retail Developments Tbk,,Finance
+2025-09-20,NISP.JK,NISP,PT Bank OCBC NISP Tbk,,Finance
+2025-09-20,NOBU.JK,NOBU,PT Bank Nationalnobu Tbk,,Finance
+2025-09-20,NPGF.JK,NPGF,PT Nusa Palapa Gemilang Tbk,,Process industries
+2025-09-20,NRCA.JK,NRCA,PT Nusa Raya Cipta Tbk,,Industrial services
+2025-09-20,NSSS.JK,NSSS,PT Nusantara Sawit Sejahtera Tbk,,Process industries
+2025-09-20,NTBK.JK,NTBK,PT Nusatama Berkah Tbk,,Consumer durables
+2025-09-20,NZIA.JK,NZIA,PT Nusantara Almazia Tbk,,Finance
+2025-09-20,OASA.JK,OASA,PT Maharaksa Biru Energi Tbk,,Commercial services
+2025-09-20,OBAT.JK,OBAT,PT Brigit Biofarmaka Teknologi Tbk,,Producer manufacturing
+2025-09-20,OBMD.JK,OBMD,PT OBM Drilchem Tbk,,Process industries
+2025-09-20,OILS.JK,OILS,PT Indo Oil Perkasa Tbk,,Process industries
+2025-09-20,OKAS.JK,OKAS,PT Ancora Indonesia Resources Tbk,,Non-energy minerals
+2025-09-20,OLIV.JK,OLIV,PT Oscar Mitra Sukses Sejahtera Tbk,,Consumer durables
+2025-09-20,OMED.JK,OMED,PT Jayamas Medica Industri Tbk,,Health technology
+2025-09-20,OMRE.JK,OMRE,PT Indonesia Prima Property Tbk,,Consumer services
+2025-09-20,OPMS.JK,OPMS,PT Optima Prima Metal Sinergi Tbk,,Distribution services
+2025-09-20,PACK.JK,PACK,PT Abadi Nusantara Hijau Investama Tbk,,Process industries
+2025-09-20,PADA.JK,PADA,PT Personel Alih Daya Tbk,,Commercial services
+2025-09-20,PADI.JK,PADI,PT Minna Padi Investama Sekuritas Tbk,,Finance
+2025-09-20,PALM.JK,PALM,PT Provident Investasi Bersama Tbk,,Process industries
+2025-09-20,PAMG.JK,PAMG,PT Bima Sakti Pertiwi Tbk,,Finance
+2025-09-20,PANI.JK,PANI,PT Pantai Indah Kapuk Dua Tbk,,Consumer non-durables
+2025-09-20,PANR.JK,PANR,PT Panorama Sentrawisata Tbk,,Consumer services
+2025-09-20,PANS.JK,PANS,PT Panin Sekuritas Tbk,,Finance
+2025-09-20,PART.JK,PART,PT Cipta Perdana Lancar Tbk,,Producer manufacturing
+2025-09-20,PBID.JK,PBID,PT Panca Budi Idaman Tbk,,Process industries
+2025-09-20,PBRX.JK,PBRX,PT Pan Brothers Tbk,,Process industries
+2025-09-20,PBSA.JK,PBSA,PT Paramita Bangun Sarana Tbk,,Industrial services
+2025-09-20,PCAR.JK,PCAR,PT Prima Cakrawala Abadi Tbk,,Consumer non-durables
+2025-09-20,PDES.JK,PDES,PT Destinasi Tirta Nusantara Tbk,,Consumer services
+2025-09-20,PDPP.JK,PDPP,PT Primadaya Plastisindo Tbk,,Process industries
+2025-09-20,PEGE.JK,PEGE,PT Panca Global Kapital Tbk,,Finance
+2025-09-20,PEHA.JK,PEHA,PT Phapros Tbk,,Distribution services
+2025-09-20,PEVE.JK,PEVE,PT Penta Valent Tbk,,Distribution services
+2025-09-20,PGAS.JK,PGAS,PT Perusahaan Gas Negara Tbk Class B,,Utilities
+2025-09-20,PGEO.JK,PGEO,PT Pertamina Geothermal Energy Tbk,,Utilities
+2025-09-20,PGJO.JK,PGJO,PT Tourindo Guide Indonesia Tbk,,Technology services
+2025-09-20,PGLI.JK,PGLI,PT Pembangunan Graha Lestari Indah Tbk,,Consumer services
+2025-09-20,PGUN.JK,PGUN,PT Pradiksi Gunatama Tbk,,Process industries
+2025-09-20,PICO.JK,PICO,PT Pelangi Indah Canindo Tbk,,Process industries
+2025-09-20,PIPA.JK,PIPA,PT Multi Makmur Lemindo Tbk,,Non-energy minerals
+2025-09-20,PJAA.JK,PJAA,PT Pembangunan Jaya Ancol Tbk,,Consumer services
+2025-09-20,PKPK.JK,PKPK,PT Paragon Karya Perkasa Tbk,,Industrial services
+2025-09-20,PLAN.JK,PLAN,PT Planet Properindo Jaya Tbk,,Consumer services
+2025-09-20,PMJS.JK,PMJS,PT Putra Mandiri Jembar Tbk,,Retail trade
+2025-09-20,PMUI.JK,PMUI,PT Prima Multi Usaha Indonesia Tbk,,Distribution services
+2025-09-20,PNBN.JK,PNBN,PT Bank Pan Indonesia Tbk,,Finance
+2025-09-20,PNBS.JK,PNBS,PT Bank Panin Dubai Syariah Tbk,,Finance
+2025-09-20,PNGO.JK,PNGO,PT Pinago Utama Tbk,,Process industries
+2025-09-20,PNIN.JK,PNIN,PT Paninvest Tbk,,Consumer services
+2025-09-20,PNLF.JK,PNLF,PT Panin Financial Tbk,,Commercial services
+2025-09-20,PNSE.JK,PNSE,PT Pudjiadi & Sons Tbk,,Consumer services
+2025-09-20,POLA.JK,POLA,PT Pool Advista Finance Tbk,,Finance
+2025-09-20,POLI.JK,POLI,PT Pollux Hotels Group Tbk,,Consumer durables
+2025-09-20,POLU.JK,POLU,PT Golden Flower Tbk,,Consumer non-durables
+2025-09-20,POLY.JK,POLY,PT Asia Pacific Fibers Tbk Class A,,Process industries
+2025-09-20,PORT.JK,PORT,PT Nusantara Pelabuhan Handal Tbk,,Transportation
+2025-09-20,POWR.JK,POWR,PT Cikarang Listrindo Tbk,,Utilities
+2025-09-20,PPGL.JK,PPGL,PT Prima Globalindo Logistik Tbk,,Transportation
+2025-09-20,PPRE.JK,PPRE,PT PP Presisi Tbk,,Industrial services
+2025-09-20,PPRI.JK,PPRI,PT Paperocks Indonesia Tbk,,Distribution services
+2025-09-20,PRAY.JK,PRAY,PT Famon Awal Bros Sedaya Tbk,,Health services
+2025-09-20,PRDA.JK,PRDA,PT Prodia Widyahusada Tbk,,Health services
+2025-09-20,PRIM.JK,PRIM,PT Royal Prima Tbk,,Health services
+2025-09-20,PSAB.JK,PSAB,PT J Resources Asia Pasifik Tbk,,Non-energy minerals
+2025-09-20,PSAT.JK,PSAT,PT Pancaran Samudera Transport Tbk,,Transportation
+2025-09-20,PSDN.JK,PSDN,PT Prasidha Aneka Niaga Tbk,,Process industries
+2025-09-20,PSGO.JK,PSGO,PT Palma Serasih Tbk.,,Consumer non-durables
+2025-09-20,PSKT.JK,PSKT,PT Red Planet Indonesia Tbk,,Consumer services
+2025-09-20,PSSI.JK,PSSI,PT IMC Pelita Logistik Tbk,,Transportation
+2025-09-20,PTBA.JK,PTBA,PT Bukit Asam Tbk,,Energy minerals
+2025-09-20,PTIS.JK,PTIS,PT Indo Straits Tbk,,Transportation
+2025-09-20,PTMP.JK,PTMP,PT Mitra Pack Tbk,,Distribution services
+2025-09-20,PTPP.JK,PTPP,PT PP (Persero) Tbk,,Industrial services
+2025-09-20,PTPS.JK,PTPS,PT Pulau Subur Tbk,,Process industries
+2025-09-20,PTPW.JK,PTPW,PT Pratama Widya Tbk,,Industrial services
+2025-09-20,PTRO.JK,PTRO,PT Petrosea Tbk,,Industrial services
+2025-09-20,PTSN.JK,PTSN,PT Sat Nusapersada Tbk,,Electronic technology
+2025-09-20,PTSP.JK,PTSP,PT Pioneerindo Gourmet International Tbk,,Consumer services
+2025-09-20,PUDP.JK,PUDP,PT Pudjiadi Prestige Tbk Class A,,Finance
+2025-09-20,PURA.JK,PURA,PT Putra Rajawali Kencana Tbk,,Transportation
+2025-09-20,PURI.JK,PURI,PT Puri Global Sukses Tbk,,Finance
+2025-09-20,PWON.JK,PWON,PT Pakuwon Jati Tbk,,Finance
+2025-09-20,PYFA.JK,PYFA,PT Pyridam Farma Tbk,,Health technology
+2025-09-20,PZZA.JK,PZZA,PT Sarimelati Kencana Tbk,,Consumer services
+2025-09-20,RAAM.JK,RAAM,PT Tripar Multivision Plus Tbk,,Consumer services
+2025-09-20,RAJA.JK,RAJA,PT Rukun Raharja Tbk,,Utilities
+2025-09-20,RALS.JK,RALS,PT Ramayana Lestari Sentosa Tbk,,Retail trade
+2025-09-20,RANC.JK,RANC,PT Supra Boga Lestari Tbk,,Retail trade
+2025-09-20,RATU.JK,RATU,PT Raharja Energi Cepu Tbk,,Miscellaneous
+2025-09-20,RBMS.JK,RBMS,PT Ristia Bintang Mahkotasejati Tbk,,Consumer services
+2025-09-20,RCCC.JK,RCCC,PT Utama Radar Cahaya Tbk,,Electronic technology
+2025-09-20,RDTX.JK,RDTX,PT Roda Vivatex Tbk,,Finance
+2025-09-20,REAL.JK,REAL,PT Repower Asia Indonesia Tbk,,Finance
+2025-09-20,RELF.JK,RELF,PT Graha Mitra Asia Tbk,,Finance
+2025-09-20,RELI.JK,RELI,PT Reliance Sekuritas Indonesia Tbk,,Finance
+2025-09-20,RGAS.JK,RGAS,PT Kian Santang Muliatama Tbk,,Industrial services
+2025-09-20,RICY.JK,RICY,PT Ricky Putra Globalindo Tbk,,Consumer non-durables
+2025-09-20,RIGS.JK,RIGS,PT Rig Tenders Indonesia Tbk,,Transportation
+2025-09-20,RISE.JK,RISE,PT Jaya Sukses Makmur Sentosa Tbk,,Finance
+2025-09-20,RMKE.JK,RMKE,PT RMK Energy Tbk,,Transportation
+2025-09-20,RMKO.JK,RMKO,PT Royaltama Mulia Kontraktorindo Tbk,,Energy minerals
+2025-09-20,ROCK.JK,ROCK,PT Rockfields Properti Indonesia Tbk,,Finance
+2025-09-20,RODA.JK,RODA,PT Pikko Land Development Tbk,,Consumer durables
+2025-09-20,RONY.JK,RONY,PT Aracord Nusantara Group Tbk,,Industrial services
+2025-09-20,ROTI.JK,ROTI,PT Nippon Indosari Corpindo Tbk,,Consumer non-durables
+2025-09-20,RSCH.JK,RSCH,PT Charlie Hospital Semarang Tbk,,Health services
+2025-09-20,RUIS.JK,RUIS,PT Radiant Utama Interinsco Tbk,,Industrial services
+2025-09-20,RUNS.JK,RUNS,PT Global Sukses Solusi Tbk,,Technology services
+2025-09-20,SAFE.JK,SAFE,PT Steady Safe Tbk,,Transportation
+2025-09-20,SAGE.JK,SAGE,PT Saptausaha Gemilangindah Tbk,,Finance
+2025-09-20,SAME.JK,SAME,PT Sarana Meditama Metropolitan Tbk,,Health services
+2025-09-20,SAMF.JK,SAMF,PT Saraswanti Anugerah Makmur Tbk,,Process industries
+2025-09-20,SAPX.JK,SAPX,PT Satria Antaran Prima Tbk,,Transportation
+2025-09-20,SATU.JK,SATU,PT Kota Satu Properti Tbk,,Finance
+2025-09-20,SBMA.JK,SBMA,PT Surya Biru Murni Acetylene Tbk,,Process industries
+2025-09-20,SCCO.JK,SCCO,PT Supreme Cable Manufacturing & Commerce Tbk,,Producer manufacturing
+2025-09-20,SCMA.JK,SCMA,PT Surya Citra Media Tbk,,Consumer services
+2025-09-20,SCNP.JK,SCNP,PT Selaras Citra Nusantara Perkasa Tbk,,Consumer durables
+2025-09-20,SDMU.JK,SDMU,PT Sidomulyo Selaras Tbk,,Transportation
+2025-09-20,SDPC.JK,SDPC,PT Millennium Pharmacon International Tbk,,Distribution services
+2025-09-20,SDRA.JK,SDRA,PT Bank Woori Saudara Indonesia 1906 Tbk,,Finance
+2025-09-20,SEMA.JK,SEMA,PT Semacom Integrated Tbk,,Producer manufacturing
+2025-09-20,SFAN.JK,SFAN,PT Surya Fajar Capital Tbk,,Finance
+2025-09-20,SGER.JK,SGER,PT Sumber Global Energy Tbk,,Non-energy minerals
+2025-09-20,SGRO.JK,SGRO,PT Sampoerna Agro Tbk,,Process industries
+2025-09-20,SHID.JK,SHID,PT Hotel Sahid Jaya International Tbk,,Consumer services
+2025-09-20,SHIP.JK,SHIP,PT Sillo Maritime Perdana Tbk,,Transportation
+2025-09-20,SICO.JK,SICO,PT Sigma Energy Compressindo Tbk,,Energy minerals
+2025-09-20,SIDO.JK,SIDO,PT Industri Jamu dan Farmasi Sido Muncul Tbk,,Health technology
+2025-09-20,SILO.JK,SILO,PT Siloam International Hospitals Tbk Reg-S,,Health services
+2025-09-20,SIMP.JK,SIMP,PT Salim Ivomas Pratama Tbk,,Consumer non-durables
+2025-09-20,SINI.JK,SINI,PT Singaraja Putra Tbk,,Consumer services
+2025-09-20,SIPD.JK,SIPD,PT Sreeya Sewu Indonesia Tbk Class A,,Process industries
+2025-09-20,SKBM.JK,SKBM,PT Sekar Bumi Tbk,,Consumer non-durables
+2025-09-20,SKLT.JK,SKLT,PT Sekar Laut Tbk,,Consumer non-durables
+2025-09-20,SKRN.JK,SKRN,PT Superkrane Mitra Utama,,Finance
+2025-09-20,SLIS.JK,SLIS,PT Gaya Abadi Sempurna Tbk,,Distribution services
+2025-09-20,SMAR.JK,SMAR,PT Sinar Mas Agro Resources & Technology Tbk,,Process industries
+2025-09-20,SMBR.JK,SMBR,PT Semen Baturaja Tbk Class B,,Non-energy minerals
+2025-09-20,SMDM.JK,SMDM,PT Suryamas Dutamakmur Tbk,,Finance
+2025-09-20,SMDR.JK,SMDR,PT Samudera Indonesia Tbk,,Transportation
+2025-09-20,SMGA.JK,SMGA,PT Sumber Mineral Global Abadi Tbk,,Distribution services
+2025-09-20,SMGR.JK,SMGR,PT Semen Indonesia (Persero) Tbk,,Non-energy minerals
+2025-09-20,SMIL.JK,SMIL,PT Sarana Mitra Luas Tbk,,Finance
+2025-09-20,SMKL.JK,SMKL,PT Satyamitra Kemas Lestari Tbk,,Process industries
+2025-09-20,SMKM.JK,SMKM,PT Sumber Mas Konstruksi Tbk,,Industrial services
+2025-09-20,SMLE.JK,SMLE,PT Sinergi Multi Lestarindo Tbk,,Distribution services
+2025-09-20,SMMA.JK,SMMA,PT Sinar Mas Multiartha Tbk Class A,,Finance
+2025-09-20,SMMT.JK,SMMT,PT Golden Eagle Energy Tbk,,Energy minerals
+2025-09-20,SMRA.JK,SMRA,PT Summarecon Agung Tbk,,Finance
+2025-09-20,SMSM.JK,SMSM,PT Selamat Sempurna Tbk,,Producer manufacturing
+2025-09-20,SNLK.JK,SNLK,PT Sunter Lakeside Hotel Tbk,,Consumer services
+2025-09-20,SOCI.JK,SOCI,PT Soechi Lines Tbk,,Transportation
+2025-09-20,SOFA.JK,SOFA,PT Boston Furniture Industries Tbk,,Non-energy minerals
+2025-09-20,SOHO.JK,SOHO,PT Soho Global Health Tbk,,Health technology
+2025-09-20,SOLA.JK,SOLA,PT Xolare Rcr Energy Tbk,,Industrial services
+2025-09-20,SONA.JK,SONA,PT Sona Topas Tourism Industry Tbk,,Retail trade
+2025-09-20,SOSS.JK,SOSS,PT Shield On Service Tbk,,Commercial services
+2025-09-20,SOTS.JK,SOTS,PT Satria Mega Kencana Tbk,,Consumer services
+2025-09-20,SOUL.JK,SOUL,PT Mitra Tirta Buwana Tbk,,Consumer non-durables
+2025-09-20,SPMA.JK,SPMA,PT Suparma Tbk,,Process industries
+2025-09-20,SPRE.JK,SPRE,PT Soraya Berjaya Indonesia Tbk,,Consumer durables
+2025-09-20,SPTO.JK,SPTO,PT Surya Pertiwi Tbk,,Distribution services
+2025-09-20,SRAJ.JK,SRAJ,PT Sejahteraraya Anugrahjaya Tbk,,Health services
+2025-09-20,SRSN.JK,SRSN,PT Indo Acidatama Tbk,,Consumer non-durables
+2025-09-20,SRTG.JK,SRTG,PT Saratoga Investama Sedaya Tbk,,Finance
+2025-09-20,SSIA.JK,SSIA,PT Surya Semesta Internusa Tbk,,Industrial services
+2025-09-20,SSMS.JK,SSMS,PT Sawit Sumbermas Sarana Tbk,,Process industries
+2025-09-20,SSTM.JK,SSTM,PT Sunson Textile Manufacturer Tbk,,Process industries
+2025-09-20,STAA.JK,STAA,PT Sumber Tani Agung Resources Tbk,,Process industries
+2025-09-20,STAR.JK,STAR,PT Buana Artha Anugerah Tbk,,Finance
+2025-09-20,STRK.JK,STRK,PT Lovina Beach Brewery Tbk,,Consumer non-durables
+2025-09-20,STTP.JK,STTP,PT Siantar Top Tbk,,Consumer non-durables
+2025-09-20,SULI.JK,SULI,PT SLJ Global Tbk,,Non-energy minerals
+2025-09-20,SUNI.JK,SUNI,PT Sunindo Pratama Tbk,,Energy minerals
+2025-09-20,SURE.JK,SURE,PT Super Energy Tbk,,Energy minerals
+2025-09-20,SURI.JK,SURI,PT Maja Agung Latexindo Tbk,,Consumer non-durables
+2025-09-20,SWID.JK,SWID,PT Saraswanti Indoland Development Tbk,,Finance
+2025-09-20,TALF.JK,TALF,PT Tunas Alfin Tbk,,Process industries
+2025-09-20,TAMA.JK,TAMA,PT Lancartama Sejati Tbk,,Consumer durables
+2025-09-20,TAMU.JK,TAMU,PT Pelayaran Tamarin Samudra Tbk,,Transportation
+2025-09-20,TAPG.JK,TAPG,PT Triputra Agro Persada Tbk,,Process industries
+2025-09-20,TARA.JK,TARA,PT Agung Semesta Sejahtera Tbk,,Finance
+2025-09-20,TAXI.JK,TAXI,PT Express Transindo Utama Tbk,,Transportation
+2025-09-20,TAYS.JK,TAYS,PT Jaya Swarasa Agung Tbk,,Consumer non-durables
+2025-09-20,TBIG.JK,TBIG,PT Tower Bersama Infrastructure Tbk,,Finance
+2025-09-20,TBLA.JK,TBLA,PT Tunas Baru Lampung Tbk,,Process industries
+2025-09-20,TBMS.JK,TBMS,PT Tembaga Mulia Semanan Tbk,,Producer manufacturing
+2025-09-20,TCID.JK,TCID,PT Mandom Indonesia Tbk,,Consumer non-durables
+2025-09-20,TCPI.JK,TCPI,PT Transcoal Pacific,,Transportation
+2025-09-20,TEBE.JK,TEBE,PT Dana Brata Luhur Tbk,,Industrial services
+2025-09-20,TFAS.JK,TFAS,PT Telefast Indonesia Tbk,,Technology services
+2025-09-20,TGKA.JK,TGKA,PT Tigaraksa Satria Tbk,,Distribution services
+2025-09-20,TIFA.JK,TIFA,PT KDB Tifa Finance Tbk,,Finance
+2025-09-20,TINS.JK,TINS,PT Timah Tbk,,Non-energy minerals
+2025-09-20,TIRA.JK,TIRA,PT Tira Austenite Tbk,,Distribution services
+2025-09-20,TKIM.JK,TKIM,PT Pabrik Kertas Tjiwi Kimia Tbk,,Process industries
+2025-09-20,TLDN.JK,TLDN,PT Teladan Prima Agro Tbk,,Process industries
+2025-09-20,TLKM.JK,TLKM,PT Telkom Indonesia (Persero) Tbk Class B,,Communications
+2025-09-20,TMAS.JK,TMAS,PT Temas Tbk,,Transportation
+2025-09-20,TMPO.JK,TMPO,PT Tempo Inti Media Tbk,,Consumer services
+2025-09-20,TNCA.JK,TNCA,PT Trimuda Nuansa Citra Tbk,,Transportation
+2025-09-20,TOBA.JK,TOBA,PT TBS Energi Utama Tbk,,Energy minerals
+2025-09-20,TOOL.JK,TOOL,PT Rohartindo Nusantara Luas Tbk,,Commercial services
+2025-09-20,TOSK.JK,TOSK,PT Topindo Solusi Komunika Tbk,,Technology services
+2025-09-20,TOTL.JK,TOTL,PT Total Bangun Persada Tbk,,Industrial services
+2025-09-20,TOTO.JK,TOTO,PT Surya Toto Indonesia Tbk,,Producer manufacturing
+2025-09-20,TOWR.JK,TOWR,PT Sarana Menara Nusantara Tbk,,Finance
+2025-09-20,TPIA.JK,TPIA,PT Chandra Asri Pacific Tbk,,Process industries
+2025-09-20,TPMA.JK,TPMA,PT Trans Power Marine Tbk,,Transportation
+2025-09-20,TRGU.JK,TRGU,PT Cerestar Indonesia Tbk,,Process industries
+2025-09-20,TRIM.JK,TRIM,PT Trimegah Sekuritas Indonesia Tbk,,Finance
+2025-09-20,TRIN.JK,TRIN,PT Perintis Triniti Properti Tbk,,Finance
+2025-09-20,TRIS.JK,TRIS,PT Trisula International Tbk,,Consumer non-durables
+2025-09-20,TRJA.JK,TRJA,PT Transkon Jaya Tbk,,Finance
+2025-09-20,TRON.JK,TRON,PT Teknologi Karya Digital Nusa Tbk,,Technology services
+2025-09-20,TRST.JK,TRST,"PT Trias Sentosa, Tbk",,Process industries
+2025-09-20,TRUE.JK,TRUE,PT Triniti Dinamik Tbk,,Finance
+2025-09-20,TRUK.JK,TRUK,PT Guna Timur Raya Tbk,,Transportation
+2025-09-20,TRUS.JK,TRUS,PT Trust Finance Indonesia Tbk,,Finance
+2025-09-20,TSPC.JK,TSPC,PT Tempo Scan Pacific Tbk,,Distribution services
+2025-09-20,TUGU.JK,TUGU,PT Asuransi Tugu Pratama Indonesia Tbk,,Finance
+2025-09-20,TYRE.JK,TYRE,PT King Tire Indonesia Tbk,,Consumer durables
+2025-09-20,UANG.JK,UANG,PT Pakuan Tbk,,Finance
+2025-09-20,UCID.JK,UCID,PT Uni-Charm Indonesia Tbk,,Consumer non-durables
+2025-09-20,UDNG.JK,UDNG,PT Agro Bahari Nusantara Tbk,,Process industries
+2025-09-20,UFOE.JK,UFOE,PT Damai Sejahtera Abadi Tbk,,Retail trade
+2025-09-20,ULTJ.JK,ULTJ,PT Ultrajaya Milk Industry & Trading Co. Tbk,,Consumer non-durables
+2025-09-20,UNIC.JK,UNIC,PT Unggul Indah Cahaya Tbk,,Consumer non-durables
+2025-09-20,UNIQ.JK,UNIQ,PT Ulima Nitra Tbk,,Industrial services
+2025-09-20,UNSP.JK,UNSP,PT Bakrie Sumatera Plantations Tbk,,Distribution services
+2025-09-20,UNTD.JK,UNTD,PT Terang Dunia Internusa Tbk,,Consumer durables
+2025-09-20,UNTR.JK,UNTR,PT United Tractors Tbk,,Energy minerals
+2025-09-20,UNVR.JK,UNVR,PT Unilever Indonesia Tbk,,Consumer non-durables
+2025-09-20,URBN.JK,URBN,PT Urban Jakarta Propertindo Tbk,,Finance
+2025-09-20,UVCR.JK,UVCR,PT Trimegah Karya Pratama Tbk,,Technology services
+2025-09-20,VAST.JK,VAST,PT Vastland Indonesia Tbk,,Finance
+2025-09-20,VERN.JK,VERN,PT Verona Indah Pictures Tbk,,Consumer services
+2025-09-20,VICI.JK,VICI,PT Victoria Care Indonesia Tbk,,Consumer non-durables
+2025-09-20,VICO.JK,VICO,PT Victoria Investama Tbk,,Finance
+2025-09-20,VINS.JK,VINS,PT Victoria Insurance Tbk,,Finance
+2025-09-20,VISI.JK,VISI,PT Satu Visi Putra Tbk,,Distribution services
+2025-09-20,VIVA.JK,VIVA,PT Visi Media Asia Tbk Class A,,Consumer services
+2025-09-20,VKTR.JK,VKTR,PT VKTR Teknologi Mobilitas Tbk,,Consumer durables
+2025-09-20,VOKS.JK,VOKS,PT Voksel Electric Tbk,,Producer manufacturing
+2025-09-20,VRNA.JK,VRNA,PT Mizuho Leasing Indonesia Tbk,,Finance
+2025-09-20,VTNY.JK,VTNY,PT Venteny Fortuna International Tbk,,Technology services
+2025-09-20,WAPO.JK,WAPO,PT Wahana Pronatural Tbk,,Consumer non-durables
+2025-09-20,WEGE.JK,WEGE,PT Wijaya Karya Bangunan Gedung Tbk,,Industrial services
+2025-09-20,WEHA.JK,WEHA,PT WEHA Transportasi Indonesia Tbk,,Transportation
+2025-09-20,WGSH.JK,WGSH,PT Wira Global Solusi Tbk,,Technology services
+2025-09-20,WIDI.JK,WIDI,PT Widiant Jaya Krenindo Tbk,,Finance
+2025-09-20,WIFI.JK,WIFI,PT Solusi Sinergi Digital Tbk,,Technology services
+2025-09-20,WIIM.JK,WIIM,PT Wismilak Inti Makmur Tbk,,Consumer non-durables
+2025-09-20,WINE.JK,WINE,PT Hatten Bali Tbk,,Consumer non-durables
+2025-09-20,WINR.JK,WINR,PT Winner Nusantara Jaya Tbk,,Finance
+2025-09-20,WINS.JK,WINS,PT Wintermar Offshore Marine Tbk,,Transportation
+2025-09-20,WIRG.JK,WIRG,PT WIR Asia Tbk,,Health services
+2025-09-20,WMUU.JK,WMUU,PT Widodo Makmur Unggas Tbk,,Process industries
+2025-09-20,WOMF.JK,WOMF,PT Wahana Ottomitra Multiartha Tbk,,Finance
+2025-09-20,WOOD.JK,WOOD,PT Integra Indocabinet Tbk,,Consumer durables
+2025-09-20,WOWS.JK,WOWS,PT Ginting Jaya Energi Tbk,,Industrial services
+2025-09-20,WSBP.JK,WSBP,PT Waskita Beton Precast Tbk,,Non-energy minerals
+2025-09-20,WTON.JK,WTON,PT Wijaya Karya Beton Tbk,,Industrial services
+2025-09-20,YELO.JK,YELO,PT Yelooo Integra Datanet Tbk,,Distribution services
+2025-09-20,YOII.JK,YOII,PT Asuransi Digital Bersama Tbk,,Finance
+2025-09-20,YPAS.JK,YPAS,PT Yanaprima Hastapersada Tbk,,Process industries
+2025-09-20,YULE.JK,YULE,PT Yulie Sekuritas Indonesia Tbk,,Finance
+2025-09-20,YUPI.JK,YUPI,Pt Yupi Indo Jelly Gum Tbk,,Consumer non-durables
+2025-09-20,ZATA.JK,ZATA,PT Bersama Zatta Jaya Tbk,,Retail trade
+2025-09-20,ZINC.JK,ZINC,PT Kapuas Prima Coal Tbk,,Non-energy minerals
+2025-09-20,ZONE.JK,ZONE,PT Mega Perintis Tbk,,Consumer non-durables
+2025-09-20,ZYRX.JK,ZYRX,PT Zyrexindo Mandiri Buana Tbk,,Electronic technology

@@ -1,0 +1,21 @@
+name: Swing Trend Following
+version: swing-trend-following-v1
+enabled: true
+default: true
+description: Trend-following swing strategy with pullback entry and explicit risk exits.
+holding_period: 3-20 trading days
+strict_trend_filter: true
+source_rules:
+  formula_version: rules-swing-v1
+  config_checksum: c503472236a60102d2ff06afef5a7eff48248602db5f2bfd45194ccf206dc4e5
+required_rules:
+  - ma20_above_ma50
+  - ma50_above_ma200
+  - pullback_to_ma20
+  - rsi_not_overbought
+  - macd_bullish_crossover
+  - positive_momentum
+  - high_liquidity
+exit_rules:
+  - ma20_below_ma50
+  - rsi_extreme_overbought

@@ -1,0 +1,1 @@
+"""Technical ranking agent."""

@@ -1,0 +1,14 @@
+version: swing-lifecycle-v1
+strategy:
+  name: Swing Trend Following
+  version: swing-trend-following-v1
+  config_checksum: c40d8ee21c8dcf5f5e215f63075c2f7bfbee1bd6d615d38dd6e5f929bad9cea0
+stop_atr_multiple: 1.5
+trailing_atr_multiple: 1.5
+take_profit_1_r_multiple: 1.5
+take_profit_2_r_multiple: 2
+partial_fraction: 0.5
+maximum_holding_sessions: 20
+fees:
+  buy_percent: 0.15
+  sell_percent: 0.25

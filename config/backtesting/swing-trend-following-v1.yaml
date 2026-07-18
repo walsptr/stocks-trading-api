@@ -1,0 +1,17 @@
+version: swing-backtest-v1
+strategy:
+  name: Swing Trend Following
+  version: swing-trend-following-v1
+  config_checksum: c40d8ee21c8dcf5f5e215f63075c2f7bfbee1bd6d615d38dd6e5f929bad9cea0
+execution:
+  entry: next_session_open
+  exit: swing_lifecycle
+  price_basis: raw
+  allow_overlapping_positions: false
+lifecycle_config: config/positions/swing-lifecycle-v1.yaml
+fees:
+  buy_percent: 0.15
+  sell_percent: 0.25
+metrics:
+  notional: 1000000
+  sharpe_periods: 252

@@ -1,0 +1,26 @@
+version: swing-technical-score-v1
+source_rules:
+  formula_version: rules-swing-v1
+  config_checksum: c503472236a60102d2ff06afef5a7eff48248602db5f2bfd45194ccf206dc4e5
+weights:
+  ma20_above_ma50: 20
+  ma50_above_ma200: 15
+  pullback_to_ma20: 20
+  rsi_not_overbought: 10
+  macd_bullish_crossover: 10
+  positive_momentum: 10
+  volume_confirmation: 5
+  high_liquidity: 10
+ratings:
+  - name: Strong Buy
+    minimum: 90
+    maximum: 100
+  - name: Buy
+    minimum: 75
+    maximum: 89
+  - name: Watchlist
+    minimum: 60
+    maximum: 74
+  - name: Ignore
+    minimum: 0
+    maximum: 59

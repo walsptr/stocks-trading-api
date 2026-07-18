@@ -1,0 +1,120 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: stocks
+      POSTGRES_USER: stocks
+      POSTGRES_PASSWORD: stocks
+      TZ: Asia/Jakarta
+      PGTZ: Asia/Jakarta
+    ports:
+      - "5432:5432"
+    volumes:
+      - stocks_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stocks -d stocks"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    environment:
+      TZ: Asia/Jakarta
+      STOCKS_DATABASE_URL: postgresql+psycopg://stocks:stocks@db:5432/stocks
+      STOCKS_TIMEZONE: Asia/Jakarta
+      STOCKS_APP_PORT: "21235"
+      STOCKS_RANKING_CONFIG_PATH: config/ranking/technical-v1.yaml
+      STOCKS_ANALYSIS_CONFIG_PATH: config/analysis/technical-v1.yaml
+      STOCKS_ALERTS_CONFIG_PATH: config/alerts/technical-v1.yaml
+      STOCKS_RULES_CONFIG_PATH: config/rules-swing-v1.yaml
+      STOCKS_SCORING_CONFIG_PATH: config/scoring/swing-trend-following-v1.yaml
+      STOCKS_BACKTEST_CONFIG_PATH: config/backtesting/swing-trend-following-v1.yaml
+      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/bsjp-v1.yaml
+      STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
+      STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
+      STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"
+      STOCKS_CORS_ORIGINS: http://localhost:21231,http://127.0.0.1:21231
+      STOCKS_TELEGRAM_BOT_TOKEN: ${STOCKS_TELEGRAM_BOT_TOKEN:-}
+      STOCKS_TELEGRAM_CHAT_ID: ${STOCKS_TELEGRAM_CHAT_ID:-}
+    ports:
+      - "21235:21235"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "uv",
+          "run",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:21235/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  web:
+    build: ./web
+    environment:
+      TZ: Asia/Jakarta
+      API_INTERNAL_BASE_URL: http://app:21235
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+    ports:
+      - "21231:3000"
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  scheduler:
+    build: .
+    entrypoint: ["uv", "run", "python", "scripts/scheduler.py"]
+    environment:
+      TZ: Asia/Jakarta
+      STOCKS_DATABASE_URL: postgresql+psycopg://stocks:stocks@db:5432/stocks
+      STOCKS_TIMEZONE: Asia/Jakarta
+      STOCKS_SCHEDULER_ENABLED: ${STOCKS_SCHEDULER_ENABLED:-true}
+      STOCKS_SCHEDULER_TIMEZONE: ${STOCKS_SCHEDULER_TIMEZONE:-Asia/Jakarta}
+      STOCKS_SCHEDULER_HOUR: ${STOCKS_SCHEDULER_HOUR:-18}
+      STOCKS_SCHEDULER_MINUTE: ${STOCKS_SCHEDULER_MINUTE:-0}
+      STOCKS_SYNC_BOOTSTRAP_YEARS: ${STOCKS_SYNC_BOOTSTRAP_YEARS:-1}
+      STOCKS_SYNC_POLL_SECONDS: ${STOCKS_SYNC_POLL_SECONDS:-2}
+      STOCKS_RULES_CONFIG_PATH: config/rules-swing-v1.yaml
+      STOCKS_SCORING_CONFIG_PATH: config/scoring/swing-trend-following-v1.yaml
+      STOCKS_RANKING_CONFIG_PATH: config/ranking/technical-v1.yaml
+      STOCKS_ANALYSIS_CONFIG_PATH: config/analysis/technical-v1.yaml
+      STOCKS_ALERTS_CONFIG_PATH: config/alerts/technical-v1.yaml
+      STOCKS_BACKTEST_CONFIG_PATH: config/backtesting/swing-trend-following-v1.yaml
+      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/bsjp-v1.yaml
+      STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
+      STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
+      STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"
+      STOCKS_TELEGRAM_BOT_TOKEN: ${STOCKS_TELEGRAM_BOT_TOKEN:-}
+      STOCKS_TELEGRAM_CHAT_ID: ${STOCKS_TELEGRAM_CHAT_ID:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  stocks_postgres:

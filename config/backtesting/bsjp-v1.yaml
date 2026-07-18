@@ -1,0 +1,17 @@
+version: bsjp-backtest-v1
+strategy:
+  name: BSJP
+  version: bsjp-v1
+  config_checksum: 5f25d1a6281837b3a830bb50977f8f0b229aaa614e2bd95e90eab05373ae0d88
+execution:
+  entry: signal_close
+  exit: next_session_open
+  price_basis: raw
+  allow_overlapping_positions: false
+fees:
+  buy_percent: 0.15
+  sell_percent: 0.25
+metrics:
+  notional: 1000000
+  sharpe_periods: 252
+  risk_free_rate: 0

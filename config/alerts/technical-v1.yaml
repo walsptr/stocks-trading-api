@@ -1,0 +1,19 @@
+version: technical-alerts-v1
+minimum_score: 60
+maximum_attempts: 3
+retry_base_seconds: 1.0
+triggers:
+  - new_strong_buy
+  - strategy_matched
+  - breakout_detected
+  - volume_spike_detected
+  - trend_reversal_warning
+  - approaching_stop_loss
+  - take_profit_reached
+  - score_upgrade
+  - score_downgrade
+sources:
+  analysis_version: technical-analysis-v1
+  analysis_config_checksum: dc61e6fea20a3799084ba867b354896cf2c0fa9429be1b2d6b2473cb077271a2
+  rule_formula_version: rules-swing-v1
+  rule_config_checksum: c503472236a60102d2ff06afef5a7eff48248602db5f2bfd45194ccf206dc4e5
