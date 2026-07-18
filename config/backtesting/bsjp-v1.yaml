@@ -1,4 +1,6 @@
 version: bsjp-backtest-v1
+enabled: false
+default: false
 strategy:
   name: BSJP
   version: bsjp-v1

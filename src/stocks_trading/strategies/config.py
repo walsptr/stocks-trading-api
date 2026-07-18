@@ -47,6 +47,10 @@ def load_strategy_configuration(path: Path) -> StrategyConfiguration:
         raise StrategyConfigurationError(f"unknown required rules: {', '.join(sorted(unknown))}")
     if len(set(required_rules)) != len(required_rules):
         raise StrategyConfigurationError("required_rules must not contain duplicates")
+    enabled = bool(payload.get("enabled", True))
+    default = bool(payload.get("default", False))
+    if default and not enabled:
+        raise StrategyConfigurationError("disabled strategy configuration cannot be default")
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return StrategyConfiguration(
         name=required_string(payload, "name"),
@@ -56,8 +60,8 @@ def load_strategy_configuration(path: Path) -> StrategyConfiguration:
         source_rule_config_checksum=required_string(source, "config_checksum"),
         required_rules=required_rules,
         checksum=hashlib.sha256(canonical.encode()).hexdigest(),
-        enabled=bool(payload.get("enabled", True)),
-        default=bool(payload.get("default", False)),
+        enabled=enabled,
+        default=default,
         holding_period=str(payload.get("holding_period", "")),
         exit_rules=tuple(str(item) for item in payload.get("exit_rules", [])),
         strict_trend_filter=bool(payload.get("strict_trend_filter", True)),

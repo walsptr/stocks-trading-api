@@ -30,6 +30,8 @@ def swing_rules(**overrides):
 
 def test_swing_entry_conditions_match():
     configuration = load_strategy_configuration(Path("config/strategies/swing-trend-following-v1.yaml"))
+    assert configuration.enabled is True
+    assert configuration.default is True
     result = evaluate_strategy(swing_rules(), configuration)
     assert result.passed is True
     assert all(result.evaluation_details[name] == "passed" for name in configuration.required_rules)

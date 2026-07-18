@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     analysis_config_path: Path = Path("config/analysis/technical-v1.yaml")
     alerts_config_path: Path = Path("config/alerts/technical-v1.yaml")
     backtest_config_path: Path = Path("config/backtesting/swing-trend-following-v1.yaml")
-    optimization_config_path: Path = Path("config/optimization/bsjp-v1.yaml")
+    optimization_config_path: Path = Path("config/optimization/swing-trend-following-v1.yaml")
     risk_config_path: Path = Path("config/risk/technical-v1.yaml")
     positions_config_path: Path = Path("config/positions/swing-lifecycle-v1.yaml")
     portfolio_initial_cash_idr: Decimal = Field(default=Decimal("100000000"), gt=0)

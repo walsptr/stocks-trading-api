@@ -578,7 +578,7 @@ def show_alert_run(run_id: UUID) -> None:
 
 @backtests_app.command("run")
 def backtests_run(
-    strategy: Annotated[str, typer.Option("--strategy")] = "BSJP",
+    strategy: Annotated[str, typer.Option("--strategy")] = "Swing Trend Following",
     from_date: Annotated[str, typer.Option("--from")] = ...,
     to_date: Annotated[str, typer.Option("--to")] = ...,
 ) -> None:
@@ -618,7 +618,7 @@ def backtests_trades(
 
 @optimizations_app.command("run")
 def optimizations_run(
-    strategy: Annotated[str, typer.Option("--strategy")] = "BSJP",
+    strategy: Annotated[str, typer.Option("--strategy")] = "Swing Trend Following",
     from_date: Annotated[str, typer.Option("--from")] = ...,
     to_date: Annotated[str, typer.Option("--to")] = ...,
 ) -> None:
@@ -772,8 +772,8 @@ def emit_alert_run_result(result) -> None:
 
 
 def validate_strategy_name(value: str) -> None:
-    if value.strip().casefold() not in {"bsjp", "swing trend following", "swing-trend-following"}:
-        raise typer.BadParameter("strategy must be BSJP or Swing Trend Following")
+    if value.strip().casefold() not in {"swing trend following", "swing-trend-following"}:
+        raise typer.BadParameter("only the active Swing Trend Following strategy is supported")
 
 
 def parse_date(value: str | None) -> date | None:

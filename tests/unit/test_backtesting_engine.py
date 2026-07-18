@@ -5,6 +5,9 @@ from pathlib import Path
 from stocks_trading.backtesting.config import load_backtest_configuration
 from stocks_trading.backtesting.evaluator import run_backtest
 from stocks_trading.domain.models import DailyCandle, StrategyResult
+import pytest
+
+pytestmark = pytest.mark.legacy_bsjp
 
 
 def config():

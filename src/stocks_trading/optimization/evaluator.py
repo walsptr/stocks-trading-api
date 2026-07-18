@@ -79,23 +79,35 @@ def candidate_signals(sources, parameters, candidate_id, backtest_configuration)
     signals = []
     for candle, indicator in sources:
         rules = candidate_rules(candle, indicator, parameters, candidate_id)
-        required = [rules.price_above_ma5, rules.price_above_ma10, rules.ma5_above_ma10,
-                    rules.ma10_above_ma20, rules.positive_momentum, rules.high_liquidity]
-        if parameters["require_breakout"]:
-            required.append(rules.breakout_20)
-        if parameters["require_volume_spike"]:
-            required.append(rules.volume_spike)
-        passed = False if False in required else None if None in required else True
-        signals.append(StrategyResult(
-            candle.symbol, candle.trading_date, backtest_configuration.strategy_name,
-            backtest_configuration.strategy_version, candidate_id, passed, {},
-            "optimizer-rules-v1", candidate_id,
-        ))
+        if "pullback_tolerance" in parameters:
+            required_rules = [
+                "ma20_above_ma50", "pullback_to_ma20", "rsi_not_overbought",
+                "macd_bullish_crossover", "positive_momentum", "high_liquidity",
+            ]
+            if parameters["require_ma50_above_ma200"]:
+                required_rules.append("ma50_above_ma200")
+        else:
+            required_rules = ["price_above_ma5", "price_above_ma10", "ma5_above_ma10",
+                              "ma10_above_ma20", "positive_momentum", "high_liquidity"]
+            if parameters["require_breakout"]:
+                required_rules.append("breakout_20")
+            if parameters["require_volume_spike"]:
+                required_rules.append("volume_spike")
+        values = [getattr(rules, name) for name in required_rules]
+        passed = False if False in values else None if None in values else True
+        details = {name: "passed" if getattr(rules, name) is True else "failed" if getattr(rules, name) is False else "unavailable" for name in required_rules}
+        if indicator.atr_14 is not None:
+            details["atr_14"] = str(indicator.atr_14)
+        signals.append(StrategyResult(candle.symbol, candle.trading_date,
+            backtest_configuration.strategy_name, backtest_configuration.strategy_version,
+            candidate_id, passed, details,
+            "optimizer-rules-v1", candidate_id))
     return signals
 
 
 def candidate_rules(candle, indicator, parameters, candidate_id):
     compare = lambda left, right, operation: None if left is None or right is None else operation(left, right)
+    swing = "pullback_tolerance" in parameters
     return DailyRules(
         symbol=candle.symbol, trading_date=candle.trading_date,
         price_above_ma5=compare(candle.close, indicator.sma_5, lambda a,b:a>b),
@@ -103,10 +115,21 @@ def candidate_rules(candle, indicator, parameters, candidate_id):
         price_above_ma20=compare(candle.close, indicator.sma_20, lambda a,b:a>b),
         ma5_above_ma10=compare(indicator.sma_5, indicator.sma_10, lambda a,b:a>b),
         ma10_above_ma20=compare(indicator.sma_10, indicator.sma_20, lambda a,b:a>b),
-        volume_spike=compare(indicator.volume_ratio, Decimal(parameters["volume_spike_ratio"]), lambda a,b:a>=b),
+        volume_spike=compare(indicator.volume_ratio, Decimal(parameters.get("volume_spike_ratio", "1.5")), lambda a,b:a>=b),
         breakout_20=compare(candle.close, indicator.highest_high_20, lambda a,b:a>b),
-        high_liquidity=compare(indicator.average_traded_value_20, Decimal(parameters["liquidity_threshold"]), lambda a,b:a>=b),
+        high_liquidity=compare(indicator.average_traded_value_20, Decimal(parameters.get("liquidity_threshold", "10000000000")), lambda a,b:a>=b),
         positive_momentum=compare(indicator.daily_change_percent, Decimal(0), lambda a,b:a>b),
+        price_above_ma50=compare(candle.close, indicator.sma_50, lambda a,b:a>b),
+        ma20_above_ma50=compare(indicator.sma_20, indicator.sma_50, lambda a,b:a>b),
+        ma50_above_ma200=compare(indicator.sma_50, indicator.sma_200, lambda a,b:a>b),
+        pullback_to_ma20=compare(candle.close, indicator.sma_20, lambda a,b: abs(a-b)/b <= Decimal(parameters.get("pullback_tolerance", "0.03")) if b else False),
+        rsi_not_overbought=compare(indicator.rsi_14, Decimal(parameters.get("rsi_overbought_threshold", "70")), lambda a,b:a<b),
+        rsi_not_oversold=compare(indicator.rsi_14, Decimal("30"), lambda a,b:a>b),
+        macd_bullish_crossover=indicator.macd_bullish_crossover,
+        higher_low_formed=indicator.higher_low_formed,
+        volume_confirmation=None if indicator.volume_ratio is None or indicator.daily_change_percent is None else indicator.volume_ratio >= Decimal(parameters.get("volume_confirmation_ratio", "1.0")) and indicator.daily_change_percent > 0,
+        ma20_below_ma50=compare(indicator.sma_20, indicator.sma_50, lambda a,b:a<b),
+        rsi_extreme_overbought=compare(indicator.rsi_14, Decimal("80"), lambda a,b:a>b),
         formula_version="optimizer-rules-v1", config_checksum=candidate_id,
         indicator_version=indicator.calculation_version,
     )

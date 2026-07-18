@@ -1,4 +1,6 @@
 version: swing-backtest-v1
+enabled: true
+default: true
 strategy:
   name: Swing Trend Following
   version: swing-trend-following-v1

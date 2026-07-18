@@ -47,9 +47,9 @@ def strategy(passed):
     config = configuration()
     return StrategyResult(
         symbol="BBCA.JK", trading_date=date(2026, 7, 16),
-        strategy_name="BSJP", strategy_version=config.source_versions["strategy_version"],
+        strategy_name=config.source_versions["strategy_name"], strategy_version=config.source_versions["strategy_version"],
         strategy_config_checksum=config.source_versions["strategy_config_checksum"],
-        passed=passed, evaluation_details={}, source_rule_formula_version="rules-v1",
+        passed=passed, evaluation_details={}, source_rule_formula_version=config.source_versions["rule_formula_version"],
         source_rule_config_checksum=config.source_versions["rule_config_checksum"],
     )
 

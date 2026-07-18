@@ -8,6 +8,8 @@ class BacktestService:
         self.configuration = configuration
 
     def run(self, *, start_date, end_date):
+        if not self.configuration.enabled:
+            raise ValueError("backtest configuration is disabled")
         if start_date > end_date:
             raise ValueError("start_date must not be after end_date")
         signals, candles = self.repository.load_sources(

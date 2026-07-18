@@ -1,6 +1,8 @@
 version: swing-optimizer-v1
+enabled: true
+default: true
 indicator_version: technical-v3
-backtest_config: config/backtesting/bsjp-v1.yaml
+backtest_config: config/backtesting/swing-trend-following-v1.yaml
 method: grid_search
 split:
   training_fraction: 0.7
@@ -8,7 +10,7 @@ selection:
   objective: validation_sharpe
   minimum_validation_trades: 30
 parameters:
-  volume_spike_ratios: ["1.0", "1.25", "1.5"]
-  liquidity_thresholds: ["5000000000", "10000000000"]
-  require_breakout: [false, true]
-  require_volume_spike: [false, true]
+  pullback_tolerances: ["0.02", "0.03"]
+  rsi_overbought_thresholds: ["65", "70", "75"]
+  volume_confirmation_ratios: ["1.0", "1.25"]
+  require_ma50_above_ma200: [false, true]

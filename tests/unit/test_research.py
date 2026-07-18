@@ -46,7 +46,7 @@ class FakeCoordinator:
 
 def services():
     backtest = SimpleNamespace(configuration=SimpleNamespace(
-        strategy_name="BSJP", strategy_version="bsjp-v1", strategy_config_checksum="checksum"
+        strategy_name="Swing Trend Following", strategy_version="swing-trend-following-v1", strategy_config_checksum="checksum"
     ), run=lambda **kwargs: SimpleNamespace(run_id=UUID(int=1)))
     optimization = SimpleNamespace(configuration=SimpleNamespace(indicator_version="technical-v2"),
                                    run=lambda **kwargs: SimpleNamespace(run_id=UUID(int=2)))

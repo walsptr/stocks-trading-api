@@ -18,7 +18,7 @@ class FakeRepository:
 
 def test_service_persists_empty_result() -> None:
     repository = FakeRepository()
-    result = BacktestService(repository, load_backtest_configuration(Path("config/backtesting/bsjp-v1.yaml"))).run(
+    result = BacktestService(repository, load_backtest_configuration(Path("config/backtesting/swing-trend-following-v1.yaml"))).run(
         start_date=date(2026, 7, 1), end_date=date(2026, 7, 16)
     )
     assert result.metrics.completed_trades == 0
@@ -26,6 +26,16 @@ def test_service_persists_empty_result() -> None:
 
 def test_invalid_range_rejected() -> None:
     with pytest.raises(ValueError, match="start_date"):
-        BacktestService(FakeRepository(), load_backtest_configuration(Path("config/backtesting/bsjp-v1.yaml"))).run(
+        BacktestService(FakeRepository(), load_backtest_configuration(Path("config/backtesting/swing-trend-following-v1.yaml"))).run(
             start_date=date(2026, 7, 16), end_date=date(2026, 7, 1)
+        )
+
+
+def test_legacy_bsjp_backtest_is_disabled() -> None:
+    configuration = load_backtest_configuration(Path("config/backtesting/bsjp-v1.yaml"))
+    assert configuration.enabled is False
+    assert configuration.default is False
+    with pytest.raises(ValueError, match="disabled"):
+        BacktestService(FakeRepository(), configuration).run(
+            start_date=date(2026, 7, 1), end_date=date(2026, 7, 16)
         )

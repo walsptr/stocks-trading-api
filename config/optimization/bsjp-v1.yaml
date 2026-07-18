@@ -1,4 +1,6 @@
 version: bsjp-optimizer-v1
+enabled: false
+default: false
 method: grid_search
 indicator_version: technical-v2
 split:

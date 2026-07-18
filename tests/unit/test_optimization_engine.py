@@ -28,7 +28,10 @@ def indicator(day: date, *, volume_ratio: str = "1.5", liquidity: str = "1000000
         "BBCA.JK", day, Decimal("105"), Decimal("100"), Decimal("95"),
         Decimal("90"), Decimal("80"), Decimal("900000"), Decimal(volume_ratio),
         Decimal("1"), Decimal("2"), Decimal("109"), Decimal("90"),
-        Decimal(liquidity), calculation_version="technical-v2",
+        Decimal(liquidity), rsi_14=Decimal("55"), macd=Decimal("2"),
+        macd_signal=Decimal("1"), macd_histogram=Decimal("1"),
+        macd_bullish_crossover=True, higher_low_formed=True,
+        calculation_version="technical-v3",
     )
 
 
@@ -43,14 +46,14 @@ def metrics(*, trades: int, sharpe: str | None, compounded: str = "0.1", drawdow
 
 def test_candidate_rules_use_persisted_indicators_and_candidate_thresholds() -> None:
     rules = candidate_rules(candle(date(2026, 1, 1)), indicator(date(2026, 1, 1)), {
-        "volume_spike_ratio": "2.0", "liquidity_threshold": "5000000000",
-        "require_breakout": False, "require_volume_spike": False,
+        "pullback_tolerance": "0.02", "rsi_overbought_threshold": "70",
+        "volume_confirmation_ratio": "1.0", "require_ma50_above_ma200": True,
     }, "candidate")
 
-    assert rules.volume_spike is False
+    assert rules.pullback_to_ma20 is False
     assert rules.high_liquidity is True
-    assert rules.breakout_20 is True
-    assert rules.indicator_version == "technical-v2"
+    assert rules.macd_bullish_crossover is True
+    assert rules.indicator_version == "technical-v3"
 
 
 def test_candidate_sort_key_applies_documented_tie_breaks() -> None:
@@ -67,7 +70,7 @@ def test_candidate_sort_key_applies_documented_tie_breaks() -> None:
 
 
 def test_optimize_uses_chronological_70_30_split_and_eligibility(monkeypatch) -> None:
-    configuration = load_optimization_configuration(Path("config/optimization/bsjp-v1.yaml"))
+    configuration = load_optimization_configuration(Path("config/optimization/swing-trend-following-v1.yaml"))
     backtest = load_backtest_configuration(configuration.backtest_config_path)
     days = [date(2026, 1, 1) + timedelta(days=index) for index in range(10)]
     sources = [(candle(day), indicator(day)) for day in days]
@@ -94,7 +97,7 @@ def test_optimize_uses_chronological_70_30_split_and_eligibility(monkeypatch) ->
 
 
 def test_null_sharpe_and_trade_floor_are_ineligible(monkeypatch) -> None:
-    configuration = load_optimization_configuration(Path("config/optimization/bsjp-v1.yaml"))
+    configuration = load_optimization_configuration(Path("config/optimization/swing-trend-following-v1.yaml"))
     backtest = load_backtest_configuration(configuration.backtest_config_path)
     days = [date(2026, 1, 1), date(2026, 1, 2)]
     sources = [(candle(day), indicator(day)) for day in days]

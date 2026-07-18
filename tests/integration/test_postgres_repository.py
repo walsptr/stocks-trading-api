@@ -270,7 +270,7 @@ def test_optimizer_migration_and_candidate_persistence() -> None:
         session_factory = create_session_factory(create_database_engine(database_url))
         repository = SqlAlchemyOptimizationRepository(session_factory)
         configuration = load_optimization_configuration(
-            Path("config/optimization/bsjp-v1.yaml")
+            Path("config/optimization/swing-trend-following-v1.yaml")
         )
         metrics = BacktestMetrics(
             signal_count=30, completed_trades=30, unclosed_signals=0,
@@ -301,7 +301,7 @@ def test_optimizer_migration_and_candidate_persistence() -> None:
         )
 
         run_id = repository.save_result(
-            configuration, "BSJP", date(2026, 1, 1), date(2026, 7, 16), result
+            configuration, "Swing Trend Following", date(2026, 1, 1), date(2026, 7, 16), result
         )
 
         assert repository.get_run(run_id)["winner_id"] == candidate.candidate_id

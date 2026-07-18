@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.legacy_bsjp
+
 from stocks_trading.domain.models import DailyRules
 from stocks_trading.strategies.config import (
     StrategyConfigurationError,
@@ -70,6 +72,8 @@ def test_rejects_wrong_rule_identity() -> None:
 
 
 def test_configuration_checksum_is_stable() -> None:
+    assert configuration().enabled is False
+    assert configuration().default is False
     assert configuration().checksum == configuration().checksum
     assert len(configuration().checksum) == 64
 

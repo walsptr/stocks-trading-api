@@ -155,7 +155,7 @@ class FakeStrategyRepository:
 
 
 def strategy_result(symbol, trading_date):
-    config = load_strategy_configuration(Path("config/strategies/bsjp-v1.yaml"))
+    config = load_strategy_configuration(Path("config/strategies/swing-trend-following-v1.yaml"))
     return StrategyResult(
         symbol=symbol,
         trading_date=trading_date,
@@ -172,7 +172,7 @@ def strategy_result(symbol, trading_date):
 def strategy_dependency_override():
     return (
         FakeStrategyRepository(),
-        load_strategy_configuration(Path("config/strategies/bsjp-v1.yaml")),
+        load_strategy_configuration(Path("config/strategies/swing-trend-following-v1.yaml")),
     )
 
 
@@ -180,9 +180,11 @@ def test_strategy_listing_and_latest_result() -> None:
     app.dependency_overrides[strategy_dependencies] = strategy_dependency_override
     try:
         listing = client.get("/strategies")
-        latest = client.get("/strategies/bsjp/bbca")
+        latest = client.get("/strategies/Swing%20Trend%20Following/bbca")
         assert listing.status_code == 200
-        assert listing.json()[0]["name"] == "BSJP"
+        assert listing.json()[0]["name"] == "Swing Trend Following"
+        assert listing.json()[0]["enabled"] is True
+        assert listing.json()[0]["default"] is True
         assert latest.status_code == 200
         assert latest.json()["passed"] is True
     finally:
@@ -192,8 +194,8 @@ def test_strategy_listing_and_latest_result() -> None:
 def test_strategy_history_and_unknown_strategy() -> None:
     app.dependency_overrides[strategy_dependencies] = strategy_dependency_override
     try:
-        history = client.get("/strategies/BSJP/BBCA/history?before=2026-07-16&limit=1")
-        missing = client.get("/strategies/SWING/BBCA")
+        history = client.get("/strategies/Swing%20Trend%20Following/BBCA/history?before=2026-07-16&limit=1")
+        missing = client.get("/strategies/BSJP/BBCA")
         assert history.status_code == 200
         assert history.json()[0]["trading_date"] == "2026-07-15"
         assert missing.status_code == 404
@@ -429,7 +431,7 @@ class FakeOptimizationRepository:
         return {
             "id": run_id,
             "status": "succeeded",
-            "strategy": "BSJP",
+            "strategy": "Swing Trend Following",
             "winner_id": self.candidate_id,
             "started_at": datetime(2026, 7, 18, 1, 0, tzinfo=UTC),
             "finished_at": None,
@@ -469,7 +471,7 @@ def test_optimization_endpoints() -> None:
     candidate_id = fake_optimization_repository.candidate_id
     try:
         assert client.get("/optimizations").status_code == 200
-        assert client.get(f"/optimizations/{run_id}").json()["strategy"] == "BSJP"
+        assert client.get(f"/optimizations/{run_id}").json()["strategy"] == "Swing Trend Following"
         assert client.get(f"/optimizations/{run_id}/winner").json()["rank"] == 1
         assert client.get(f"/optimizations/{run_id}/candidates").json()[0]["candidate_id"] == candidate_id
         assert client.get(f"/optimizations/{run_id}/candidates/{candidate_id}").status_code == 200
@@ -511,7 +513,7 @@ def test_research_endpoints(monkeypatch) -> None:
     job = {
         "id": job_id, "job_type": "backtest", "status": "running",
         "start_date": date(2025, 7, 17), "end_date": date(2026, 7, 17),
-        "stage": "evaluating", "message": "Running BSJP backtest", "progress": 55,
+        "stage": "evaluating", "message": "Running Swing Trend Following backtest", "progress": 55,
         "result_run_id": run_id, "error": None,
         "started_at": datetime(2026, 7, 18, 1, 0, tzinfo=UTC), "finished_at": None,
     }

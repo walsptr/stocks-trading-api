@@ -4,6 +4,8 @@ from uuid import uuid4
 
 import pytest
 
+pytestmark = pytest.mark.legacy_bsjp
+
 from stocks_trading.config.settings import Settings
 from stocks_trading.domain.models import DailyRules, StrategySymbolStatus
 from stocks_trading.strategies.config import load_strategy_configuration

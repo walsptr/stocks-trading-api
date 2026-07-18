@@ -39,4 +39,7 @@ packages = ["src/stocks_trading"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-markers = ["integration: requires Docker and PostgreSQL"]
+markers = [
+  "integration: requires Docker and PostgreSQL",
+  "legacy_bsjp: verifies the disabled BSJP implementation remains recoverable",
+]

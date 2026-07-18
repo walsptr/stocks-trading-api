@@ -129,7 +129,7 @@ Rules preserve `null` when the required lookback input is unavailable. The curre
 
 ## Strategy Engine
 
-The active strategy is Swing Trend Following, configured in `config/strategies/swing-trend-following-v1.yaml`, with a 3-20 trading-day holding horizon. Legacy BSJP remains available in `config/strategies/bsjp-v1.yaml` with `enabled: false` and is excluded from the default pipeline.
+The active strategy is Swing Trend Following, configured in `config/strategies/swing-trend-following-v1.yaml`, with a 3-20 trading-day holding horizon. Legacy BSJP strategy, backtest, and optimizer configurations remain in the repository with `enabled: false` and `default: false`; they are excluded from the scheduler, API research flow, CLI defaults, and deployment configuration.
 
 The Position Lifecycle Agent converts passed Swing signals into virtual positions. Entries use the next session open, TP1 realizes 50%, the remaining position uses a non-decreasing ATR trailing stop, and any still-open position exits at the twentieth trading session. Position state and events are available from `GET /positions`, `GET /positions/{symbol}`, and `GET /positions/{symbol}/events`.
 
@@ -232,12 +232,12 @@ GET http://localhost:21235/alerts?delivery_status=pending&limit=100
 GET http://localhost:21235/alerts/{id}
 ```
 
-## BSJP Backtesting Agent
+## Swing Trend Following Backtesting Agent
 
-The Backtesting Agent evaluates exact-version persisted BSJP signals without recalculating rules or indicators. A passed signal enters at the signal day raw close and exits at the next available session raw open. The default model applies a 0.15% buy fee and 0.25% sell fee to an equal IDR 1,000,000 notional per completed trade.
+The Backtesting Agent evaluates exact-version persisted Swing Trend Following signals without recalculating rules or indicators. A passed signal enters at the next session open and follows the configured ATR stop, partial take-profit, trailing stop, trend-reversal, and maximum-holding lifecycle. The default model applies a 0.15% buy fee and 0.25% sell fee to an equal IDR 1,000,000 notional per completed trade.
 
 ```bash
-docker compose run --rm app backtests run --strategy BSJP --from 2025-01-01 --to 2026-07-16
+docker compose run --rm app backtests run --strategy "Swing Trend Following" --from 2025-01-01 --to 2026-07-16
 docker compose run --rm app backtests list --limit 20
 docker compose run --rm app backtests show UUID
 docker compose run --rm app backtests trades UUID --symbol BBCA.JK --limit 100
@@ -255,11 +255,11 @@ GET http://localhost:21235/backtests/{id}/trades?symbol=BBCA&limit=100&offset=0
 
 Backtesting is manually invoked and is not part of the weekday update pipeline.
 
-## BSJP Strategy Optimizer
+## Swing Trend Following Strategy Optimizer
 
-The Phase 10 optimizer performs a deterministic 24-candidate grid search over BSJP's
-volume-spike threshold, liquidity threshold, breakout requirement, and volume-spike
-requirement. It consumes persisted `technical-v2` indicators and daily candles, then
+The optimizer performs a deterministic 24-candidate grid search over the Swing strategy's
+MA20 pullback tolerance, RSI overbought threshold, volume-confirmation ratio, and strict
+MA50-above-MA200 trend filter. It consumes persisted `technical-v3` indicators and daily candles, then
 splits available trading dates chronologically into 70% training and 30% validation.
 Candidates need at least 30 completed validation trades and a non-null Sharpe ratio.
 
@@ -268,7 +268,7 @@ candidate's validation trades and per-symbol metrics, but never modifies active 
 strategy configuration.
 
 ```bash
-docker compose run --rm app optimizations run --strategy BSJP --from 2025-01-01 --to 2026-07-16
+docker compose run --rm app optimizations run --strategy "Swing Trend Following" --from 2025-01-01 --to 2026-07-16
 docker compose run --rm app optimizations list --limit 20
 docker compose run --rm app optimizations show UUID
 docker compose run --rm app optimizations candidates UUID --limit 100
@@ -312,7 +312,7 @@ API: http://localhost:21235
 ```
 
 It displays the latest ranking snapshot, rating filters, stock-level deterministic
-analysis, BSJP status, recent alerts, API health, and a manual refresh control. The
+analysis, Swing Trend Following status, recent alerts, API health, and a manual refresh control. The
 frontend never starts collection or analysis jobs and performs no technical calculations.
 
 Deploy both services with:

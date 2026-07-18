@@ -10,6 +10,8 @@ class OptimizationService:
         self.backtest_configuration = load_backtest_configuration(configuration.backtest_config_path)
 
     def run(self, *, start_date, end_date):
+        if not self.configuration.enabled:
+            raise ValueError("optimization configuration is disabled")
         if start_date > end_date:
             raise ValueError("start_date must not be after end_date")
         sources, candles = self.repository.load_sources(

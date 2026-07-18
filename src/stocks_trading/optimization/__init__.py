@@ -1,1 +1,1 @@
-"""Deterministic BSJP strategy optimization."""
+"""Deterministic Swing Trend Following strategy optimization."""

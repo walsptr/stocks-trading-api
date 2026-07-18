@@ -24,6 +24,8 @@ class BacktestConfiguration:
     checksum: str
     execution_model: str = "legacy_next_open"
     lifecycle_config_path: Path | None = None
+    enabled: bool = True
+    default: bool = False
 
 
 def load_backtest_configuration(path: Path) -> BacktestConfiguration:
@@ -39,6 +41,10 @@ def load_backtest_configuration(path: Path) -> BacktestConfiguration:
     swing_execution = {"entry": "next_session_open", "exit": "swing_lifecycle", "price_basis": "raw", "allow_overlapping_positions": False}
     if execution not in (legacy_execution, swing_execution):
         raise BacktestConfigurationError("unsupported execution model")
+    enabled = bool(payload.get("enabled", True))
+    default = bool(payload.get("default", False))
+    if default and not enabled:
+        raise BacktestConfigurationError("disabled backtest configuration cannot be default")
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return BacktestConfiguration(
         version=required_string(payload, "version"),
@@ -52,6 +58,8 @@ def load_backtest_configuration(path: Path) -> BacktestConfiguration:
         checksum=hashlib.sha256(canonical.encode()).hexdigest(),
         execution_model="swing_lifecycle" if execution == swing_execution else "legacy_next_open",
         lifecycle_config_path=Path(payload["lifecycle_config"]) if payload.get("lifecycle_config") else None,
+        enabled=enabled,
+        default=default,
     )
 
 

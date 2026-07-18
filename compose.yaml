@@ -30,7 +30,7 @@ services:
       STOCKS_RULES_CONFIG_PATH: config/rules-swing-v1.yaml
       STOCKS_SCORING_CONFIG_PATH: config/scoring/swing-trend-following-v1.yaml
       STOCKS_BACKTEST_CONFIG_PATH: config/backtesting/swing-trend-following-v1.yaml
-      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/bsjp-v1.yaml
+      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/swing-trend-following-v1.yaml
       STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
       STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
       STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"
@@ -103,7 +103,7 @@ services:
       STOCKS_ANALYSIS_CONFIG_PATH: config/analysis/technical-v1.yaml
       STOCKS_ALERTS_CONFIG_PATH: config/alerts/technical-v1.yaml
       STOCKS_BACKTEST_CONFIG_PATH: config/backtesting/swing-trend-following-v1.yaml
-      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/bsjp-v1.yaml
+      STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/swing-trend-following-v1.yaml
       STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
       STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
       STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"

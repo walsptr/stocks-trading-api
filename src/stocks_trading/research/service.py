@@ -88,7 +88,7 @@ class ResearchManager:
                 service = services[23] if job["job_type"] == "backtest" else services[25]
                 self.repository.update_job(
                     job_id, stage="evaluating",
-                    message="Running legacy BSJP backtest" if job["job_type"] == "backtest" else "Evaluating legacy BSJP optimizer candidates",
+                    message="Running Swing Trend Following backtest" if job["job_type"] == "backtest" else "Evaluating Swing Trend Following optimizer candidates",
                     progress=55,
                 )
                 result = await asyncio.to_thread(

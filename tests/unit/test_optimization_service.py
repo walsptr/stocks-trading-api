@@ -26,7 +26,7 @@ class FakeRepository:
 
 def test_service_loads_sources_once_and_persists_result(monkeypatch) -> None:
     repository = FakeRepository()
-    configuration = load_optimization_configuration(Path("config/optimization/bsjp-v1.yaml"))
+    configuration = load_optimization_configuration(Path("config/optimization/swing-trend-following-v1.yaml"))
     expected = OptimizationResult((), None, date(2026, 1, 1), date(2026, 1, 7), date(2026, 1, 8), date(2026, 1, 10), None)
     monkeypatch.setattr("stocks_trading.optimization.service.optimize", lambda *args: expected)
 
@@ -34,17 +34,25 @@ def test_service_loads_sources_once_and_persists_result(monkeypatch) -> None:
         start_date=date(2026, 1, 1), end_date=date(2026, 1, 10)
     )
 
-    assert repository.loaded == ("technical-v2", date(2026, 1, 1), date(2026, 1, 10))
+    assert repository.loaded == ("technical-v3", date(2026, 1, 1), date(2026, 1, 10))
     assert repository.saved[-1] is expected
     assert result.run_id == repository.run_id
     assert result.candidate_count == 0
 
 
 def test_service_rejects_invalid_range() -> None:
-    configuration = load_optimization_configuration(Path("config/optimization/bsjp-v1.yaml"))
+    configuration = load_optimization_configuration(Path("config/optimization/swing-trend-following-v1.yaml"))
     with pytest.raises(ValueError, match="start_date"):
         OptimizationService(FakeRepository(), configuration).run(
             start_date=date(2026, 1, 2), end_date=date(2026, 1, 1)
+        )
+
+
+def test_legacy_bsjp_optimizer_is_disabled() -> None:
+    configuration = load_optimization_configuration(Path("config/optimization/bsjp-v1.yaml"))
+    with pytest.raises(ValueError, match="disabled"):
+        OptimizationService(FakeRepository(), configuration).run(
+            start_date=date(2026, 1, 1), end_date=date(2026, 1, 2)
         )
 
 
