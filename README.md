@@ -199,7 +199,7 @@ docker compose run --rm app analyses update
 docker compose run --rm app analysis-runs show UUID
 ```
 
-Read latest, historical, and daily dashboard analyses:
+Read latest, historical, and daily API analysis results:
 
 ```text
 GET http://localhost:21235/analysis/BBCA
@@ -302,37 +302,25 @@ PostgreSQL integration tests run when Docker is available and skip otherwise. Li
 uv run stocks market bootstrap --years 1 --symbol BBCA.JK --symbol TLKM.JK
 ```
 
-## Phase 11 Web Dashboard
+## API Deployment
 
-The read-only Next.js dashboard is served separately from the API:
+The backend HTTP application is exposed on port `21235`:
 
 ```text
-Web: http://localhost:21231
 API: http://localhost:21235
+Docs: http://localhost:21235/docs
+Health: http://localhost:21235/health
 ```
 
-It displays the latest ranking snapshot, rating filters, stock-level deterministic
-analysis, Swing Trend Following status, recent alerts, API health, and a manual refresh control. The
-frontend never starts collection or analysis jobs and performs no technical calculations.
-
-Deploy both services with:
+Deploy the API, PostgreSQL, and weekday scheduler with:
 
 ```bash
 sudo -n ./deploy.sh
 ```
 
-For local frontend development:
-
-```bash
-cd web
-npm install
-API_INTERNAL_BASE_URL=http://localhost:21235 npm run dev
-```
-
-The browser uses same-origin `/api/*` URLs. Next.js proxies those requests to FastAPI
-through `API_INTERNAL_BASE_URL`, which is `http://app:21235` inside Docker. This avoids
-using the visitor's `localhost` when the dashboard is opened from another computer.
-Direct browser access to FastAPI remains supported through `STOCKS_CORS_ORIGINS`.
+The API supports direct client access through the configured
+`STOCKS_CORS_ORIGINS` value. This repository contains the backend application,
+database migrations, scheduler, and operational deployment scripts.
 
 ## Local OHLCV Cache and Scheduler
 
