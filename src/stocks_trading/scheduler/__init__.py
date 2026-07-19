@@ -1,1 +1,1 @@
-"""Scheduled weekday pipeline execution."""
+"""Scheduled IDX trading-day pipeline execution."""

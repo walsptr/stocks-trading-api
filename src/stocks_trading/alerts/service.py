@@ -18,8 +18,11 @@ class AlertService:
 
     async def rebuild(self, *, start_date: date | None = None,
                       end_date: date | None = None) -> AlertRunResult:
+        return await asyncio.to_thread(self._rebuild_sync, start_date, end_date)
+
+    def _rebuild_sync(self, start_date: date | None, end_date: date | None) -> AlertRunResult:
         run_id = self.run_repository.create(AlertRunMode.REBUILD)
-        generated = await self._generate(start_date=start_date, end_date=end_date)
+        generated = self._generate_sync(start_date=start_date, end_date=end_date)
         self.run_repository.finish(run_id, generated, 0, 0)
         return AlertRunResult(run_id, AlertRunStatus.SUCCEEDED, generated, 0, 0)
 
@@ -57,14 +60,22 @@ class AlertService:
         return AlertRunResult(run_id, status, 0, sent, failed)
 
     async def _generate(self, *, start_date, end_date) -> int:
+        return await asyncio.to_thread(
+            self._generate_sync, start_date=start_date, end_date=end_date
+        )
+
+    def _generate_sync(self, *, start_date, end_date) -> int:
         dates = self.alert_repository.source_dates(
             self.configuration.source_versions["analysis_version"],
             self.configuration.source_versions["analysis_config_checksum"],
             start_date=start_date, end_date=end_date,
         )
-        return sum([await self._generate_date(item) for item in dates])
+        return sum(self._generate_date_sync(item) for item in dates)
 
     async def _generate_date(self, trading_date: date) -> int:
+        return await asyncio.to_thread(self._generate_date_sync, trading_date)
+
+    def _generate_date_sync(self, trading_date: date) -> int:
         generated = 0
         states = self.alert_repository.load_states(
             trading_date, self.configuration.source_versions

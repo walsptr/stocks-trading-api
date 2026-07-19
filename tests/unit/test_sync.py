@@ -73,6 +73,25 @@ async def test_pipeline_uses_incremental_update_when_cache_exists():
 
 
 @pytest.mark.asyncio
+async def test_manual_technical_pipeline_stops_after_ranking():
+    collector = FakeCollector(empty=False)
+    stages = [FakeStage(str(index)) for index in range(9)]
+    services = [None, None, None, collector, None, stages[0], None, stages[1], None, stages[2], None, stages[3], None, stages[4], None, stages[5], None, stages[6], None, stages[7], None, stages[8]]
+    progress = []
+
+    await execute_pipeline(
+        services,
+        bootstrap_years=1,
+        include_downstream=False,
+        progress=lambda stage, index, message: progress.append(stage),
+    )
+
+    assert progress == ["market_data", "indicators", "rules", "strategies", "scores", "rankings"]
+    assert all(stage.calls == 1 for stage in stages[:5])
+    assert all(stage.calls == 0 for stage in stages[5:])
+
+
+@pytest.mark.asyncio
 async def test_sync_manager_returns_same_active_job():
     manager = SyncManager(lambda: None, FakeSettings())
     manager._run = lambda job, years: asyncio.sleep(3600)

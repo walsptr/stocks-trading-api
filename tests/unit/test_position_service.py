@@ -1,3 +1,5 @@
+import asyncio
+import time
 from datetime import date
 from pathlib import Path
 from uuid import UUID
@@ -25,6 +27,12 @@ class Runs:
     def finish(self, run_id, positions_count, events_count, failed=False): self.finished = not failed
 
 
+class SlowRepository(Repository):
+    def rebuild(self, configuration):
+        time.sleep(0.05)
+        super().rebuild(configuration)
+
+
 @pytest.mark.asyncio
 async def test_update_starts_at_latest_processed_date():
     repository = Repository(); runs = Runs()
@@ -33,3 +41,20 @@ async def test_update_starts_at_latest_processed_date():
     assert repository.range == (date(2026, 7, 17), date(2026, 7, 18))
     assert runs.mode == PositionRunMode.UPDATE
     assert result.positions == 0
+
+
+@pytest.mark.asyncio
+async def test_rebuild_keeps_event_loop_responsive():
+    repository = SlowRepository(); runs = Runs()
+    service = PositionService(repository, runs, load_position_configuration(Path("config/positions/swing-lifecycle-v1.yaml")))
+    heartbeat_ran = False
+
+    async def heartbeat():
+        nonlocal heartbeat_ran
+        await asyncio.sleep(0.01)
+        heartbeat_ran = True
+
+    await asyncio.gather(service.rebuild(), heartbeat())
+
+    assert heartbeat_ran is True
+    assert repository.rebuilt is True

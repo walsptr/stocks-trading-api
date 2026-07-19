@@ -119,10 +119,12 @@ class ResearchManager:
         available_start = availability[f"{job_type}_start"]
         available_end = availability[f"{job_type}_end"]
         if available_start is None or available_end is None:
-            raise ResearchValidationError("required persisted pipeline data is unavailable; run Sync first")
+            raise ResearchValidationError(
+                "Backtest source data is unavailable. Sync the Technical tab first; Backtest never generates indicators or strategy history automatically."
+            )
         if start_date < available_start or end_date > available_end:
             raise ResearchValidationError(
-                f"requested range must be between {available_start} and {available_end}; run Sync first for newer data"
+                f"Backtest data coverage is {available_start} through {available_end}, but {start_date} through {end_date} was requested. Sync the Technical tab for missing data, then retry."
             )
 
     @staticmethod

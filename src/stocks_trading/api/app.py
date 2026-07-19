@@ -1,3 +1,4 @@
+import json
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from uuid import UUID
@@ -7,6 +8,7 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from stocks_trading.config.settings import get_settings
@@ -23,7 +25,10 @@ from stocks_trading.persistence.repositories import (
     SqlAlchemyAnalysisRepository,
     SqlAlchemyAlertRepository,
     SqlAlchemyBacktestRepository,
+    SqlAlchemyHistoricalBackfillRepository,
+    SqlAlchemyFundamentalRepository,
     SqlAlchemyMarketDataRepository,
+    SqlAlchemyRunRepository,
     SqlAlchemyOptimizationRepository,
     SqlAlchemyResearchRepository,
     SqlAlchemyRiskRepository,
@@ -48,14 +53,37 @@ from stocks_trading.strategies.config import (
     load_strategy_configuration,
 )
 from stocks_trading.market_data.yahoo import latest_completed_market_date
+from stocks_trading.market_data.yahoo import YahooFinanceProvider
+from stocks_trading.market_data.service import MarketDataCollector
+from stocks_trading.market_data.calendar import load_market_calendar
+from stocks_trading.stocks.service import (
+    StockDataError,
+    StockNotFoundError,
+    StockService,
+    StockValidationError,
+)
 from stocks_trading.sync.service import SyncManager
+from stocks_trading.scheduler.service import next_run
 from stocks_trading.research.service import ResearchManager, ResearchValidationError
 from stocks_trading.portfolio.service import PortfolioService, PortfolioValidationError
+from stocks_trading.backfill.service import HistoricalBackfillManager, BackfillValidationError
+from stocks_trading.debug.live_stream import LiveStreamManager
+from stocks_trading.liquidity.config import TIERS, load_liquidity_configuration
+from stocks_trading.fundamentals.config import load_fundamental_configuration
+from stocks_trading.fundamentals.service import FundamentalService, FundamentalSyncManager
+from stocks_trading.sync.service import PipelineCoordinator
 
 
 def research_dependencies() -> SqlAlchemyResearchRepository:
     settings = get_settings()
     return SqlAlchemyResearchRepository(
+        create_session_factory(create_database_engine(settings.database_url))
+    )
+
+
+def backfill_dependencies() -> SqlAlchemyHistoricalBackfillRepository:
+    settings = get_settings()
+    return SqlAlchemyHistoricalBackfillRepository(
         create_session_factory(create_database_engine(settings.database_url))
     )
 
@@ -66,11 +94,21 @@ research_manager = ResearchManager(
     get_settings(),
 )
 
+backfill_manager = HistoricalBackfillManager(
+    backfill_dependencies(),
+    lambda: __import__("stocks_trading.cli.app", fromlist=["dependencies"]).dependencies(),
+    get_settings(),
+)
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     research_manager.recover_interrupted()
-    yield
+    backfill_manager.recover_interrupted()
+    try:
+        yield
+    finally:
+        await live_stream_manager.close()
 
 
 app = FastAPI(
@@ -89,11 +127,31 @@ app.add_middleware(
 )
 
 sync_manager = SyncManager(lambda: __import__("stocks_trading.cli.app", fromlist=["dependencies"]).dependencies(), get_settings())
+live_stream_manager = LiveStreamManager(get_settings().market_timezone)
+
+
+def fundamental_dependencies():
+    settings = get_settings()
+    repository = SqlAlchemyFundamentalRepository(create_session_factory(create_database_engine(settings.database_url)))
+    configuration = load_fundamental_configuration(settings.fundamental_config_path)
+    return repository, configuration
+
+
+def fundamental_service() -> FundamentalService:
+    repository, configuration = fundamental_dependencies()
+    return FundamentalService(repository, configuration, get_settings().max_workers)
+
+
+fundamental_sync_manager = FundamentalSyncManager(fundamental_service, PipelineCoordinator(get_settings()))
 
 
 class ResearchRequest(BaseModel):
     start_date: date
     end_date: date
+
+
+class BackfillRequest(BaseModel):
+    target_years: int = 5
 
 
 class PortfolioTransactionRequest(BaseModel):
@@ -108,6 +166,66 @@ class PortfolioTransactionRequest(BaseModel):
 
 def research_response(job):
     return jsonable_encoder(research_manager.response(job))
+
+
+def backfill_response(job):
+    return jsonable_encoder(backfill_manager.response(job))
+
+
+@app.get("/backfills/availability", tags=["backfills"])
+def backfill_availability(target_years: int = Query(default=5, ge=1, le=5)):
+    return jsonable_encoder(backfill_manager.availability(target_years))
+
+
+@app.post("/backfills", status_code=202, tags=["backfills"])
+async def start_backfill(request: BackfillRequest):
+    try:
+        job, created = await backfill_manager.start(request.target_years)
+    except BackfillValidationError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    if not created:
+        raise HTTPException(status_code=409, detail={"message": "A backfill job is already running", "job": backfill_response(job)})
+    return backfill_response(job)
+
+
+@app.post("/backfills/{job_id}/resume", status_code=202, tags=["backfills"])
+async def resume_backfill(job_id: UUID):
+    try:
+        job, created = await backfill_manager.resume(job_id)
+    except BackfillValidationError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    if not created:
+        raise HTTPException(status_code=409, detail={"message": "A backfill job is already running", "job": backfill_response(job)})
+    return backfill_response(job)
+
+
+@app.get("/backfills/current", tags=["backfills"])
+def current_backfill():
+    job = backfill_manager.current()
+    return backfill_response(job) if job else {"status": "idle"}
+
+
+@app.get("/backfills", tags=["backfills"])
+def list_backfills(limit: int = Query(default=10, ge=1, le=100), offset: int = Query(default=0, ge=0)):
+    items = [backfill_response(item) for item in backfill_manager.list(limit, offset)]
+    return {"items": items, "total": backfill_manager.count(), "limit": limit, "offset": offset}
+
+
+@app.get("/backfills/{job_id}", tags=["backfills"])
+def get_backfill(job_id: UUID):
+    job = backfill_manager.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Backfill job not found")
+    return backfill_response(job)
+
+
+@app.get("/backfills/{job_id}/symbols", tags=["backfills"])
+def backfill_symbols(job_id: UUID, status: str | None = None,
+                     limit: int = Query(default=10, ge=1, le=100), offset: int = Query(default=0, ge=0)):
+    if not backfill_manager.get(job_id):
+        raise HTTPException(status_code=404, detail="Backfill job not found")
+    items, total = backfill_manager.symbols(job_id, status, limit, offset)
+    return jsonable_encoder({"items": items, "total": total, "limit": limit, "offset": offset})
 
 
 @app.get("/research/availability", tags=["research"])
@@ -130,6 +248,11 @@ async def start_research(job_type: str, request: ResearchRequest):
 
 @app.post("/research/backtests", status_code=202, tags=["research"])
 async def start_research_backtest(request: ResearchRequest):
+    return await start_research("backtest", request)
+
+
+@app.post("/sync/backtest", status_code=202, tags=["sync", "research"])
+async def start_scoped_backtest(request: ResearchRequest):
     return await start_research("backtest", request)
 
 
@@ -222,6 +345,62 @@ def current_sync():
     return sync_response(job) if job else {"status": "idle"}
 
 
+def fundamental_job_response(job):
+    payload = job.to_dict()
+    timezone = get_settings().market_timezone
+    payload["started_at"] = localize_datetime(job.started_at, timezone)
+    payload["finished_at"] = localize_datetime(job.finished_at, timezone)
+    return jsonable_encoder(payload)
+
+
+@app.post("/sync/fundamental", status_code=202, tags=["sync", "fundamentals"])
+async def start_fundamental_sync():
+    job, created = await fundamental_sync_manager.start()
+    if not created:
+        raise HTTPException(status_code=409, detail={"message": "A fundamental sync is already running", "job": fundamental_job_response(job)})
+    return fundamental_job_response(job)
+
+
+@app.get("/sync/fundamental/current", tags=["sync", "fundamentals"])
+def current_fundamental_sync():
+    job = fundamental_sync_manager.current()
+    return fundamental_job_response(job) if job else {"status": "idle"}
+
+
+@app.get("/sync/fundamental/{job_id}", tags=["sync", "fundamentals"])
+def fundamental_sync_status(job_id: UUID):
+    job = fundamental_sync_manager.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Fundamental sync job not found")
+    return fundamental_job_response(job)
+
+
+@app.post("/sync/combined", tags=["sync", "fundamentals"])
+def recompute_combined(dependencies=Depends(fundamental_dependencies)):
+    repository, configuration = dependencies
+    technical = load_scoring_configuration(get_settings().scoring_config_path)
+    snapshot = repository.ranking_page(
+        view="combined", version=configuration.version, checksum=configuration.checksum,
+        technical_version=technical.version, technical_checksum=technical.checksum,
+        technical_weight=configuration.technical_weight, fundamental_weight=configuration.fundamental_weight,
+        limit=1, offset=0,
+    )
+    if snapshot is None:
+        raise HTTPException(status_code=422, detail="Combined ranking requires both technical and fundamental snapshots")
+    fundamental_date, technical_date, _, total = snapshot
+    run = repository.record_combined_run(
+        status="succeeded", technical_data_as_of=technical_date,
+        fundamental_data_as_of=fundamental_date, eligible_stocks=total,
+    )
+    return jsonable_encoder({
+        "id": run["id"],
+        "status": "succeeded", "message": "Combined ranking recomputed from persisted scores",
+        "technical_data_as_of": technical_date, "fundamental_data_as_of": fundamental_date,
+        "eligible_stocks": total, "started_at": localize_datetime(run["started_at"], get_settings().market_timezone),
+        "finished_at": localize_datetime(run["finished_at"], get_settings().market_timezone),
+    })
+
+
 @app.get("/sync/{job_id}", tags=["sync"])
 def sync_status(job_id: UUID):
     job = sync_manager.get(job_id)
@@ -251,14 +430,128 @@ def market_data_dependencies() -> SqlAlchemyMarketDataRepository:
     )
 
 
+def stocks_dependencies() -> StockService:
+    settings = get_settings()
+    session_factory = create_session_factory(create_database_engine(settings.database_url))
+    repository = SqlAlchemyMarketDataRepository(session_factory)
+    provider = YahooFinanceProvider(settings.market_timezone)
+    collector = MarketDataCollector(
+        provider=provider,
+        market_repository=repository,
+        run_repository=SqlAlchemyRunRepository(session_factory),
+        settings=settings,
+    )
+    return StockService(
+        repository, collector, provider, settings,
+        load_liquidity_configuration(settings.liquidity_config_path),
+    )
+
+
+def parse_liquidity_tiers(value: str | None) -> tuple[str, ...]:
+    if not value:
+        return ()
+    tiers = tuple(dict.fromkeys(item.strip().lower() for item in value.split(",") if item.strip()))
+    invalid = set(tiers) - set(TIERS)
+    if invalid:
+        raise HTTPException(status_code=422, detail=f"unsupported liquidity tier: {', '.join(sorted(invalid))}")
+    return tiers
+
+
+@app.get("/stocks", tags=["stocks"])
+def stocks(
+    search: str | None = Query(default=None, max_length=100),
+    min_turnover: Decimal | None = Query(default=None, ge=0),
+    liquidity_tier: str | None = Query(default=None),
+    limit: int = Query(default=1000, ge=1, le=2000),
+    offset: int = Query(default=0, ge=0),
+    service: StockService = Depends(stocks_dependencies),
+):
+    try:
+        return jsonable_encoder(service.list(
+            search=search, limit=limit, offset=offset, min_turnover=min_turnover,
+            liquidity_tiers=parse_liquidity_tiers(liquidity_tier),
+        ))
+    except StockValidationError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+
+@app.get("/stocks/liquidity-breakdown", tags=["stocks"])
+def stock_liquidity_breakdown(service: StockService = Depends(stocks_dependencies)):
+    scoring = load_scoring_configuration(get_settings().scoring_config_path)
+    return jsonable_encoder(service.liquidity_breakdown(
+        scoring_version=scoring.version, scoring_config_checksum=scoring.checksum,
+    ))
+
+
+def live_stream_dependencies():
+    return live_stream_manager, market_data_dependencies()
+
+
+def sse_message(event: dict[str, object]) -> str:
+    return f"event: {event['event']}\ndata: {json.dumps(event['data'], separators=(',', ':'))}\n\n"
+
+
+@app.get("/stocks/{symbol}/live", tags=["debug-live"])
+async def stock_live_stream(symbol: str, dependencies=Depends(live_stream_dependencies)):
+    manager, repository = dependencies
+    normalized = normalize_symbol(symbol)
+    if repository.stock_metadata(normalized) is None:
+        raise HTTPException(status_code=404, detail=f"symbol {normalized} is not active in the IDX universe")
+
+    async def events():
+        async for event in manager.stream(normalized):
+            yield sse_message(event)
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.get("/debug/live/ticks/{symbol}", tags=["debug-live"])
+def live_tick_snapshot(symbol: str, dependencies=Depends(live_stream_dependencies)):
+    manager, repository = dependencies
+    normalized = normalize_symbol(symbol)
+    if repository.stock_metadata(normalized) is None:
+        raise HTTPException(status_code=404, detail=f"symbol {normalized} is not active in the IDX universe")
+    return jsonable_encoder(manager.snapshot(normalized))
+
+
+@app.get("/stocks/{symbol}", tags=["stocks"])
+async def stock_detail(
+    symbol: str,
+    period: str = Query(default="6mo"),
+    interval: str = Query(default="1d"),
+    service: StockService = Depends(stocks_dependencies),
+):
+    try:
+        return jsonable_encoder(
+            await service.detail(
+                normalize_symbol(symbol), period=period.lower(), interval=interval.lower()
+            )
+        )
+    except StockNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except StockValidationError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except StockDataError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from error
+
+
 @app.get("/market-data/status", tags=["market-data"])
 def market_data_status(
     as_of: date | None = None,
     repository=Depends(market_data_dependencies),
 ) -> dict[str, object]:
     settings = get_settings()
+    market_calendar = load_market_calendar(settings.market_calendar_config_path)
     target = as_of or latest_completed_market_date(
-        datetime.now(UTC), settings.market_timezone
+        datetime.now(UTC), settings.market_timezone, market_calendar
     )
     payload = repository.cache_status(target)
     timezone = settings.market_timezone
@@ -269,6 +562,142 @@ def market_data_status(
         payload.get("last_collection_finished_at"), timezone
     )
     return jsonable_encoder(payload)
+
+
+@app.get("/market-calendar", tags=["market-data"])
+def market_calendar_status(as_of: date | None = None) -> dict[str, object]:
+    settings = get_settings()
+    calendar = load_market_calendar(settings.market_calendar_config_path)
+    local_today = datetime.now(calendar.timezone).date()
+    selected_date = as_of or local_today
+    coverage = {
+        str(year): {
+            "status": value.status,
+            "closure_count": len(value.closures),
+        }
+        for year, value in sorted(calendar.coverage.items())
+    }
+    nearby_holidays = [
+        {
+            "date": closure.trading_date,
+            "name": closure.name,
+            "type": closure.closure_type,
+        }
+        for closure in calendar.nearby_closures(selected_date)
+    ]
+    return jsonable_encoder(
+        {
+            "calendar_version": calendar.calendar_version,
+            "checksum": calendar.checksum,
+            "exchange": calendar.exchange,
+            "timezone": str(calendar.timezone),
+            "source_reference": calendar.source_reference,
+            "source_published_date": calendar.source_published_date,
+            "coverage": coverage,
+            "official_years": calendar.official_years,
+            "pending_years": calendar.pending_years,
+            "today": local_today,
+            "selected_date": selected_date,
+            "coverage_status": calendar.coverage_status(selected_date.year),
+            "is_trading_day": calendar.is_trading_day(selected_date),
+            "previous_trading_day": calendar.previous_trading_day(selected_date),
+            "next_trading_day": calendar.next_trading_day(selected_date),
+            "nearby_holidays": nearby_holidays,
+        }
+    )
+
+
+@app.get("/operations/status", tags=["operations"])
+def operations_status(
+    repository=Depends(market_data_dependencies),
+) -> dict[str, object]:
+    settings = get_settings()
+    calendar = load_market_calendar(settings.market_calendar_config_path)
+    now = datetime.now(settings.market_timezone)
+    target = latest_completed_market_date(now, settings.market_timezone, calendar)
+    cache = repository.cache_status(target)
+    cache["last_collection_started_at"] = localize_datetime(
+        cache.get("last_collection_started_at"), settings.market_timezone
+    )
+    cache["last_collection_finished_at"] = localize_datetime(
+        cache.get("last_collection_finished_at"), settings.market_timezone
+    )
+    selected_date = now.date()
+    scheduler_next_run = None
+    if settings.scheduler_enabled:
+        scheduler_next_run = next_run(
+            now,
+            settings.scheduler_hour,
+            settings.scheduler_minute,
+            calendar,
+        )
+    coverage = {
+        str(year): {
+            "status": value.status,
+            "closure_count": len(value.closures),
+        }
+        for year, value in sorted(calendar.coverage.items())
+    }
+    nearby_holidays = [
+        {
+            "date": closure.trading_date,
+            "name": closure.name,
+            "type": closure.closure_type,
+        }
+        for closure in calendar.nearby_closures(selected_date)
+    ]
+    history = backfill_manager.availability(5)
+    backfill = backfill_manager.current()
+    ranking_repository, ranking_configuration = ranking_dependencies()
+    fundamental_repository, fundamental_configuration = fundamental_dependencies()
+    return jsonable_encoder(
+        {
+            "observed_at": now,
+            "api_status": "healthy",
+            "market_data": cache,
+            "calendar": {
+                "calendar_version": calendar.calendar_version,
+                "checksum": calendar.checksum,
+                "exchange": calendar.exchange,
+                "timezone": str(calendar.timezone),
+                "source_reference": calendar.source_reference,
+                "source_published_date": calendar.source_published_date,
+                "coverage": coverage,
+                "official_years": calendar.official_years,
+                "pending_years": calendar.pending_years,
+                "today": selected_date,
+                "target_date": target,
+                "coverage_status": calendar.coverage_status(selected_date.year),
+                "is_trading_day": calendar.is_trading_day(selected_date),
+                "previous_trading_day": calendar.previous_trading_day(selected_date),
+                "next_trading_day": calendar.next_trading_day(selected_date),
+                "nearby_holidays": nearby_holidays,
+            },
+            "scheduler": {
+                "enabled": settings.scheduler_enabled,
+                "timezone": settings.scheduler_timezone,
+                "hour": settings.scheduler_hour,
+                "minute": settings.scheduler_minute,
+                "next_run_at": scheduler_next_run,
+            },
+            "sync": sync_response(sync_manager.current()) if sync_manager.current() else {"status": "idle"},
+            "scoped_sync": {
+                "technical": sync_response(sync_manager.current()) if sync_manager.current() else {
+                    "status": "idle", "last_run": ranking_repository.latest_completed_run(
+                        ranking_configuration.version, ranking_configuration.checksum
+                    ),
+                },
+                "fundamental": fundamental_job_response(fundamental_sync_manager.current()) if fundamental_sync_manager.current() else {
+                    "status": "idle", "last_run": fundamental_repository.latest_run(
+                        fundamental_configuration.version, fundamental_configuration.checksum
+                    ),
+                },
+                "combined": {"status": "idle", "last_run": fundamental_repository.latest_combined_run()},
+            },
+            "historical_coverage": history,
+            "backfill": backfill_response(backfill) if backfill else {"status": "idle"},
+        }
+    )
 
 
 def rule_dependencies() -> tuple[SqlAlchemyRuleRepository, RuleConfiguration]:
@@ -491,11 +920,25 @@ def ranking_dependencies() -> tuple[SqlAlchemyRankingRepository, RankingConfigur
 
 @app.get("/ranking", tags=["ranking"])
 def ranking(
+    view: str = Query(default="technical", pattern="^(technical|fundamental|combined)$"),
     trading_date: date | None = None,
     rating: str | None = None,
     limit: int = Query(default=100, ge=1, le=500),
     dependencies=Depends(ranking_dependencies),
 ) -> dict[str, object]:
+    if view != "technical":
+        repository, fundamental = fundamental_dependencies()
+        technical = load_scoring_configuration(get_settings().scoring_config_path)
+        snapshot = repository.ranking_page(
+            view=view, version=fundamental.version, checksum=fundamental.checksum,
+            technical_version=technical.version, technical_checksum=technical.checksum,
+            technical_weight=fundamental.technical_weight, fundamental_weight=fundamental.fundamental_weight,
+            limit=limit, offset=0, rating=rating,
+        )
+        if snapshot is None:
+            raise HTTPException(status_code=404, detail=f"{view.title()} ranking snapshot not found")
+        fundamental_date, technical_date, rows, total = snapshot
+        return ranking_view_response(view, fundamental_date, technical_date, rows, total, limit, 0, fundamental)
     repository, configuration = dependencies
     snapshot = repository.ranking_snapshot(
         configuration.version,
@@ -518,25 +961,57 @@ def ranking(
 
 @app.get("/ranking/paged", tags=["ranking"])
 def ranking_paged(
+    view: str = Query(default="technical", pattern="^(technical|fundamental|combined)$"),
     trading_date: date | None = None,
     rating: str | None = None,
+    min_turnover: Decimal | None = Query(default=None, ge=0),
+    liquidity_tier: str | None = Query(default=None),
     limit: int = Query(default=10, ge=1, le=10),
     offset: int = Query(default=0, ge=0),
     dependencies=Depends(ranking_dependencies),
 ):
+    if view != "technical":
+        repository, fundamental = fundamental_dependencies()
+        technical = load_scoring_configuration(get_settings().scoring_config_path)
+        snapshot = repository.ranking_page(
+            view=view, version=fundamental.version, checksum=fundamental.checksum,
+            technical_version=technical.version, technical_checksum=technical.checksum,
+            technical_weight=fundamental.technical_weight, fundamental_weight=fundamental.fundamental_weight,
+            limit=limit, offset=offset, rating=rating,
+        )
+        if snapshot is None:
+            raise HTTPException(status_code=404, detail=f"{view.title()} ranking snapshot not found")
+        fundamental_date, technical_date, rows, total = snapshot
+        return ranking_view_response(view, fundamental_date, technical_date, rows, total, limit, offset, fundamental)
     repository, configuration = dependencies
+    settings = get_settings()
+    liquidity = load_liquidity_configuration(settings.liquidity_config_path)
+    liquidity_tiers = parse_liquidity_tiers(liquidity_tier)
+    liquidity_as_of_date = repository.liquidity_snapshot_date(liquidity.indicator_version)
     snapshot = repository.ranking_snapshot_page(
         configuration.version, configuration.checksum,
         trading_date=trading_date, rating=rating, limit=limit, offset=offset,
+        liquidity_as_of_date=liquidity_as_of_date,
+        indicator_version=liquidity.indicator_version,
+        min_turnover=min_turnover, liquidity_tiers=liquidity_tiers,
+        liquidity_thresholds=liquidity.thresholds,
     )
     if snapshot is None:
         raise HTTPException(status_code=404, detail="Ranking snapshot not found")
-    selected_date, items, total = snapshot
+    selected_date, items, total, unfiltered_total, total_stocks = snapshot
+    filters_applied = {}
+    if min_turnover is not None:
+        filters_applied["min_turnover"] = min_turnover
+    if liquidity_tiers:
+        filters_applied["liquidity_tier"] = list(liquidity_tiers)
     return page_response(
         [ranking_response(item) for item in items], total, limit, offset,
         trading_date=selected_date, ranking_version=configuration.version,
         ranking_config_checksum=configuration.checksum,
         suggested_holding_period="3-20 trading days",
+        unfiltered_total=unfiltered_total, filtered_count=total,
+        total_stocks=total_stocks, filters_applied=filters_applied,
+        liquidity_as_of_date=liquidity_as_of_date,
     )
 
 
@@ -548,6 +1023,67 @@ def ranking_response(item) -> dict[str, object]:
         "rating": item.rating,
         "suggested_holding_period": "3-20 trading days",
     }
+
+
+def fundamental_item(snapshot, symbol: str, rank: int, technical_score=None, combined_score=None):
+    return {
+        "rank": rank, "symbol": symbol,
+        "score": snapshot.fundamental_score if combined_score is None else combined_score,
+        "rating": fundamental_rating(snapshot.fundamental_score if combined_score is None else combined_score),
+        "technical_score": technical_score,
+        "fundamental_score": snapshot.fundamental_score,
+        "combined_score": combined_score,
+        "data_status": snapshot.data_status,
+        "is_red_flagged": snapshot.is_red_flagged,
+        "red_flag_reasons": snapshot.red_flag_reasons,
+        "fundamental_data_as_of": snapshot.fundamental_data_as_of,
+        "rule_values": snapshot.rule_values,
+        "roe_percent": snapshot.roe_percent,
+        "der_percent": snapshot.der_percent,
+    }
+
+
+def fundamental_rating(score) -> str | None:
+    if score is None: return None
+    value = Decimal(score)
+    return "Strong" if value >= 80 else "Good" if value >= 65 else "Fair" if value >= 50 else "Weak"
+
+
+def ranking_view_response(view, fundamental_date, technical_date, rows, total, limit, offset, configuration):
+    items = []
+    for index, row in enumerate(rows, start=offset + 1):
+        if view == "fundamental":
+            snapshot, symbol = row
+            items.append(fundamental_item(snapshot, symbol, index))
+        else:
+            snapshot, technical, symbol = row
+            combined = (Decimal(technical.score) * configuration.technical_weight + Decimal(snapshot.fundamental_score) * configuration.fundamental_weight) / 100
+            items.append(fundamental_item(snapshot, symbol, index, technical.score, combined))
+    return jsonable_encoder({
+        "view": view, "trading_date": technical_date, "fundamental_data_as_of": fundamental_date,
+        "ranking_version": configuration.version, "ranking_config_checksum": configuration.checksum,
+        "items": items, "total": total, "limit": limit, "offset": offset,
+    })
+
+
+@app.get("/fundamentals/status", tags=["fundamentals"])
+def fundamental_status(dependencies=Depends(fundamental_dependencies)):
+    repository, configuration = dependencies
+    return jsonable_encoder({
+        "version": configuration.version,
+        "fundamental_data_as_of": repository.latest_snapshot_date(configuration.version, configuration.checksum),
+        "last_run": repository.latest_run(configuration.version, configuration.checksum),
+    })
+
+
+@app.get("/fundamentals/{symbol}", tags=["fundamentals"])
+def latest_fundamental(symbol: str, dependencies=Depends(fundamental_dependencies)):
+    repository, configuration = dependencies
+    row = repository.latest_for_symbol(normalize_symbol(symbol), configuration.version, configuration.checksum)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Fundamental snapshot not found")
+    snapshot, normalized = row
+    return jsonable_encoder(fundamental_item(snapshot, normalized, 0))
 
 
 def analysis_dependencies() -> tuple[SqlAlchemyAnalysisRepository, AnalysisConfiguration]:
@@ -589,8 +1125,54 @@ def analysis_listing(
 
 @app.get("/analysis/{symbol}", tags=["analysis"])
 def latest_analysis(
-    symbol: str, dependencies=Depends(analysis_dependencies)
+    symbol: str,
+    view: str = Query(default="technical", pattern="^(technical|fundamental|combined)$"),
+    dependencies=Depends(analysis_dependencies),
 ) -> dict[str, object]:
+    if view != "technical":
+        fundamental_repository, fundamental_configuration = fundamental_dependencies()
+        row = fundamental_repository.latest_for_symbol(
+            normalize_symbol(symbol), fundamental_configuration.version, fundamental_configuration.checksum
+        )
+        if row is None:
+            raise HTTPException(status_code=404, detail="Fundamental snapshot not found")
+        snapshot, normalized = row
+        technical_payload = None
+        if view == "combined":
+            repository, configuration = dependencies
+            result = repository.latest_analysis(normalized, configuration.version, configuration.checksum)
+            technical_payload = analysis_response(result) if result else None
+        reasons = []
+        cautions = []
+        if snapshot.roe_percent is not None:
+            reasons.append(f"ROE is {snapshot.roe_percent:.2f}%.")
+        if snapshot.der_percent is not None:
+            reasons.append(f"DER is {snapshot.der_percent:.2f}%.")
+        elif snapshot.is_bank:
+            reasons.append("DER is not applicable to this banking company.")
+        for rule, value in snapshot.rule_values.items():
+            label = rule.replace("_", " ")
+            if value is True:
+                reasons.append(f"{label} passed.")
+            elif value is False:
+                cautions.append(f"{label} failed.")
+        cautions.extend(snapshot.red_flag_reasons)
+        narrative = " ".join(reasons + (["Cautions: " + " ".join(cautions)] if cautions else []))
+        if technical_payload:
+            narrative = f"{technical_payload['narrative']} Fundamental context: {narrative}"
+        return jsonable_encoder({
+            "symbol": normalized, "view": view,
+            "trading_date": technical_payload.get("trading_date") if technical_payload else None,
+            "fundamental_data_as_of": snapshot.fundamental_data_as_of,
+            "narrative": narrative, "bullish_reasons": reasons, "caution_reasons": cautions,
+            "source_availability": {"technical": technical_payload is not None, "fundamental": True},
+            "score": technical_payload.get("score") if technical_payload else snapshot.fundamental_score,
+            "fundamental_score": snapshot.fundamental_score,
+            "rating": technical_payload.get("rating") if technical_payload else fundamental_rating(snapshot.fundamental_score),
+            "rank": technical_payload.get("rank") if technical_payload else None,
+            "strategy_status": technical_payload.get("strategy_status") if technical_payload else "not_applicable",
+            "disclaimer": "Analysis is generated only from persisted technical and fundamental data and is not financial advice.",
+        })
     repository, configuration = dependencies
     result = repository.latest_analysis(
         normalize_symbol(symbol), configuration.version, configuration.checksum

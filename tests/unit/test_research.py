@@ -68,7 +68,7 @@ def test_availability_builds_one_and_three_year_defaults():
 
 
 def test_research_rejects_range_outside_persisted_data():
-    with pytest.raises(ResearchValidationError, match="between"):
+    with pytest.raises(ResearchValidationError, match="Technical tab"):
         manager()._validate("backtest", date(2020, 1, 1), date(2026, 7, 17))
 
 

@@ -1,0 +1,82 @@
+calendar_version: idx-v2
+exchange: XIDX
+timezone: Asia/Jakarta
+source:
+  reference: PENG-0002/DIR/KSEI/0126
+  published_date: '2026-01-08'
+coverage:
+  2026:
+    status: official
+    closures:
+      - date: '2026-01-01'
+        name: New Year's Day
+        type: exchange_holiday
+      - date: '2026-01-16'
+        name: Isra Mikraj of Prophet Muhammad
+        type: exchange_holiday
+      - date: '2026-02-16'
+        name: Chinese New Year Joint Leave
+        type: exchange_holiday
+      - date: '2026-02-17'
+        name: Chinese New Year
+        type: exchange_holiday
+      - date: '2026-03-18'
+        name: Nyepi Joint Leave
+        type: exchange_holiday
+      - date: '2026-03-19'
+        name: Nyepi
+        type: exchange_holiday
+      - date: '2026-03-20'
+        name: Eid al-Fitr Joint Leave
+        type: exchange_holiday
+      - date: '2026-03-23'
+        name: Eid al-Fitr
+        type: exchange_holiday
+      - date: '2026-03-24'
+        name: Eid al-Fitr Joint Leave
+        type: exchange_holiday
+      - date: '2026-04-03'
+        name: Good Friday
+        type: exchange_holiday
+      - date: '2026-05-01'
+        name: International Labour Day
+        type: exchange_holiday
+      - date: '2026-05-14'
+        name: Ascension Day of Jesus Christ
+        type: exchange_holiday
+      - date: '2026-05-15'
+        name: Ascension Day Joint Leave
+        type: exchange_holiday
+      - date: '2026-05-27'
+        name: Eid al-Adha
+        type: exchange_holiday
+      - date: '2026-05-28'
+        name: Eid al-Adha Joint Leave
+        type: exchange_holiday
+      - date: '2026-06-01'
+        name: Pancasila Day
+        type: exchange_holiday
+      - date: '2026-06-16'
+        name: Islamic New Year
+        type: exchange_holiday
+      - date: '2026-08-17'
+        name: Indonesian Independence Day
+        type: exchange_holiday
+      - date: '2026-08-25'
+        name: Birthday of Prophet Muhammad
+        type: exchange_holiday
+      - date: '2026-12-24'
+        name: Christmas Joint Leave
+        type: exchange_holiday
+      - date: '2026-12-25'
+        name: Christmas Day
+        type: exchange_holiday
+      - date: '2026-12-31'
+        name: Exchange Holiday
+        type: special_closure
+  2027:
+    status: pending
+    closures: []
+  2028:
+    status: pending
+    closures: []

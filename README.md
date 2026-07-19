@@ -27,6 +27,26 @@ Docs: http://localhost:21235/docs
 Health: http://localhost:21235/health
 ```
 
+## Stocks API and Chart Data
+
+The Stocks API reads the active IDX universe and persisted daily market data. The list
+includes issuer metadata, latest close, daily change, and volume. Stock detail defaults
+to six months of daily OHLCV and joins persisted MA20, MA50, MA200, RSI, MACD, and ATR
+values when the Indicator Agent has calculated them.
+
+```bash
+curl 'http://localhost:21235/stocks'
+curl 'http://localhost:21235/stocks?search=BBCA&limit=20&offset=0'
+curl 'http://localhost:21235/stocks/BBCA'
+curl 'http://localhost:21235/stocks/BBCA?period=1y&interval=1d'
+```
+
+Daily requests use PostgreSQL first. If a known symbol has no stored daily history, the
+endpoint invokes the existing Market Data Collector and persists the Yahoo Finance result.
+Non-daily intervals are fetched on demand through the shared Yahoo provider and are not
+stored in the daily-price table. The JSON response is directly usable by candlestick and
+line-chart clients, including the persisted MA20 and MA50 series when available.
+
 ## Docker Lifecycle
 
 Use the lifecycle scripts after editing application code:
@@ -253,7 +273,7 @@ GET http://localhost:21235/backtests/{id}/symbols
 GET http://localhost:21235/backtests/{id}/trades?symbol=BBCA&limit=100&offset=0
 ```
 
-Backtesting is manually invoked and is not part of the weekday update pipeline.
+Backtesting is manually invoked and is not part of the scheduled update pipeline.
 
 ## Swing Trend Following Strategy Optimizer
 
@@ -284,7 +304,14 @@ GET http://localhost:21235/optimizations/{id}/winner/trades?limit=100&offset=0
 GET http://localhost:21235/optimizations/{id}/winner/symbols
 ```
 
-`docs/cron.example` schedules weekday updates at 18:00 Asia/Jakarta. The collector derives the latest completed weekday conservatively; exchange-holiday calendar support is deferred.
+`docs/cron.example` schedules updates at 18:00 Asia/Jakarta. Both the scheduler and
+latest-completed-market-date calculation use the versioned IDX calendar in
+`config/market-calendar/idx-v2.yaml`. The official 2026 closures are sourced from KSEI
+announcement `PENG-0002/DIR/KSEI/0126`, published January 8, 2026, and are skipped
+completely.
+Years marked `pending` intentionally use a weekend-only fallback until an official IDX
+calendar is reviewed and committed; the API exposes this coverage state so operators can
+detect incomplete years.
 
 ## Universe CSV Contract
 
@@ -312,7 +339,7 @@ Docs: http://localhost:21235/docs
 Health: http://localhost:21235/health
 ```
 
-Deploy the API, PostgreSQL, and weekday scheduler with:
+Deploy the API, PostgreSQL, and market-calendar-aware scheduler with:
 
 ```bash
 sudo -n ./deploy.sh
@@ -335,11 +362,45 @@ docker compose run --rm app market refresh --from 2026-07-01 --to 2026-07-16 --s
 ```
 
 Use `market refresh` only for explicit historical corrections. The `scheduler` container
-runs the weekday pipeline at 18:00 Asia/Jakarta by default. Configure it with
+runs the pipeline at 18:00 Asia/Jakarta on configured IDX trading days by default.
+Configure it with
 `STOCKS_SCHEDULER_ENABLED`, `STOCKS_SCHEDULER_TIMEZONE`, `STOCKS_SCHEDULER_HOUR`, and
 `STOCKS_SCHEDULER_MINUTE`. Bootstrap remains manual and backtesting/optimization are not
 scheduled.
 
+## Historical Backfill
+
+The Operations tab can fill missing history backwards without redownloading symbols that
+already meet the selected target. Backfill defaults to five years, persists job and
+per-symbol checkpoints in PostgreSQL, skips invalid Yahoo candle rows without repairing
+provider values, and can resume failed or partial symbols after interruption.
+
+After price collection, the job rebuilds the full available indicator, rule, Swing
+strategy, score, ranking, analysis, risk, virtual-position, and alert history. Historical
+alerts are persisted only and are never delivered to Telegram by the rebuild operation.
+
+```text
+GET  /backfills/availability?target_years=5
+POST /backfills
+GET  /backfills/current
+GET  /backfills/{id}
+GET  /backfills/{id}/symbols
+POST /backfills/{id}/resume
+```
+
 ```text
 GET /market-data/status
+GET /market-calendar
 ```
+
+`GET /market-calendar` returns the calendar version/checksum, official and pending years,
+the selected date's coverage status, adjacent trading dates, and nearby configured
+closures. `STOCKS_MARKET_CALENDAR_CONFIG_PATH` can point deployments at another reviewed,
+versioned calendar file. The repository calendar marks 2026 as `official` with 22
+configured closures. Years 2027–2028 remain `pending` and use weekend-only fallback until
+their official calendars are reviewed.
+
+`GET /operations/status` aggregates API health, local cache status, calendar coverage,
+scheduler configuration and next run, plus scoped Technical, Fundamental, and Combined
+sync status and persisted last-run metadata. API clients can poll active jobs through the
+corresponding sync-status endpoint until completion.

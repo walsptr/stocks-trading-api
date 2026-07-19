@@ -61,7 +61,10 @@ from stocks_trading.persistence.repositories import (
     SqlAlchemyStrategyRunRepository,
     SqlAlchemyRunRepository,
     SqlAlchemyUniverseRepository,
+    SqlAlchemyFundamentalRepository,
 )
+from stocks_trading.fundamentals.config import load_fundamental_configuration
+from stocks_trading.fundamentals.service import FundamentalService
 from stocks_trading.universe.service import UniverseService
 from stocks_trading.rules.config import load_rule_configuration
 from stocks_trading.rules.service import RuleService
@@ -92,6 +95,7 @@ alerts_app = typer.Typer(help="Generate and deliver Telegram alerts.")
 alert_runs_app = typer.Typer(help="Inspect alert runs.")
 backtests_app = typer.Typer(help="Run and inspect historical strategy backtests.")
 optimizations_app = typer.Typer(help="Run and inspect strategy optimizations.")
+fundamentals_app = typer.Typer(help="Collect and score versioned company fundamentals.")
 app.add_typer(universe_app, name="universe")
 app.add_typer(market_app, name="market")
 app.add_typer(runs_app, name="runs")
@@ -111,6 +115,7 @@ app.add_typer(alerts_app, name="alerts")
 app.add_typer(alert_runs_app, name="alert-runs")
 app.add_typer(backtests_app, name="backtests")
 app.add_typer(optimizations_app, name="optimizations")
+app.add_typer(fundamentals_app, name="fundamentals")
 
 
 def dependencies():
@@ -235,6 +240,27 @@ def dependencies():
         optimization_repository,
         optimization_service,
     )
+
+
+def fundamental_service() -> FundamentalService:
+    settings = get_settings()
+    repository = SqlAlchemyFundamentalRepository(
+        create_session_factory(create_database_engine(settings.database_url))
+    )
+    return FundamentalService(
+        repository,
+        load_fundamental_configuration(settings.fundamental_config_path),
+        settings.max_workers,
+    )
+
+
+@fundamentals_app.command("update")
+def fundamentals_update(
+    symbols: Annotated[list[str] | None, typer.Option("--symbol", "-s")] = None,
+) -> None:
+    result = asyncio.run(fundamental_service().update(symbols=symbols))
+    for key, value in result.items():
+        typer.echo(f"{key}: {value}")
 
 
 @universe_app.command("import")

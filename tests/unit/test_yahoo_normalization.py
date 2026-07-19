@@ -1,10 +1,15 @@
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from stocks_trading.market_data.yahoo import normalize_yahoo_frame
+from stocks_trading.market_data.calendar import load_market_calendar
+from stocks_trading.market_data.yahoo import (
+    latest_completed_market_date,
+    normalize_yahoo_frame,
+)
 
 
 def test_normalizes_single_symbol_frame_and_preserves_adjusted_close() -> None:
@@ -49,3 +54,41 @@ def test_normalizes_multi_symbol_frame() -> None:
     assert result["BBCA.JK"][0].close == Decimal("9150.0")
     assert result["TLKM.JK"][0].close == Decimal("3030.0")
 
+
+def test_latest_completed_market_date_skips_market_closure(tmp_path: Path) -> None:
+    path = tmp_path / "calendar.yaml"
+    path.write_text(
+        """calendar_version: test-v1
+exchange: XIDX
+timezone: Asia/Jakarta
+coverage:
+  2026:
+    status: official
+    closures:
+      - date: '2026-07-17'
+        name: Test closure
+        type: exchange_holiday
+""",
+        encoding="utf-8",
+    )
+    timezone = ZoneInfo("Asia/Jakarta")
+
+    result = latest_completed_market_date(
+        datetime(2026, 7, 18, 10, 0, tzinfo=timezone),
+        timezone,
+        load_market_calendar(path),
+    )
+
+    assert result == date(2026, 7, 16)
+
+
+def test_latest_completed_market_date_skips_official_closure_sequence() -> None:
+    timezone = ZoneInfo("Asia/Jakarta")
+
+    result = latest_completed_market_date(
+        datetime(2026, 3, 24, 19, 0, tzinfo=timezone),
+        timezone,
+        load_market_calendar(Path("config/market-calendar/idx-v2.yaml")),
+    )
+
+    assert result == date(2026, 3, 17)

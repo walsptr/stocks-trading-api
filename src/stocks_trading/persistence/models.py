@@ -1160,3 +1160,120 @@ class ResearchJobModel(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class HistoricalBackfillJobModel(Base):
+    __tablename__ = "historical_backfill_jobs"
+    __table_args__ = (Index("ix_historical_backfill_jobs_started_at", "started_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    target_years: Mapped[int] = mapped_column(Integer, nullable=False)
+    target_start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    target_end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    stage: Mapped[str] = mapped_column(String(64), nullable=False, default="queued")
+    message: Mapped[str] = mapped_column(String(255), nullable=False)
+    progress: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    total_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    processed_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    succeeded_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    partial_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    failed_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    no_data_symbols: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    rows_written: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    invalid_rows_skipped: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    current_symbol: Mapped[str | None] = mapped_column(String(32))
+    error: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+class FundamentalSnapshotModel(Base):
+    __tablename__ = "fundamental_snapshots"
+    __table_args__ = (
+        UniqueConstraint("security_id", "fundamental_data_as_of", "calculation_version", "config_checksum", name="uq_fundamental_snapshot_identity"),
+        Index("ix_fundamental_snapshot_date", "fundamental_data_as_of", "calculation_version"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    security_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("securities.id"), nullable=False)
+    provider: Mapped[str] = mapped_column(String(32), nullable=False)
+    fundamental_data_as_of: Mapped[date] = mapped_column(Date, nullable=False)
+    calculation_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    config_checksum: Mapped[str] = mapped_column(String(64), nullable=False)
+    sector: Mapped[str | None] = mapped_column(String(128))
+    industry: Mapped[str | None] = mapped_column(String(128))
+    is_bank: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    latest_report_period: Mapped[date | None] = mapped_column(Date)
+    currency: Mapped[str | None] = mapped_column(String(16))
+    net_income_latest: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    net_income_prior_year: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    net_income_previous_quarter: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    total_debt: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    stockholders_equity: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    roe_percent: Mapped[Decimal | None] = mapped_column(Numeric(12, 6))
+    der_percent: Mapped[Decimal | None] = mapped_column(Numeric(12, 6))
+    trailing_pe: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    price_to_book: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    valuation_per_threshold: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    valuation_pbv_threshold: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    fundamental_score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4))
+    data_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    available_core_rules: Mapped[int] = mapped_column(Integer, nullable=False)
+    applicable_core_rules: Mapped[int] = mapped_column(Integer, nullable=False)
+    rule_values: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    rule_metadata: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    is_red_flagged: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    red_flag_reasons: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    raw_metrics: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    collected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class FundamentalRunModel(Base):
+    __tablename__ = "fundamental_runs"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    calculation_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    config_checksum: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    requested_symbols: Mapped[int] = mapped_column(Integer, nullable=False)
+    success_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    insufficient_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CombinedSyncRunModel(Base):
+    __tablename__ = "combined_sync_runs"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    technical_data_as_of: Mapped[date | None] = mapped_column(Date)
+    fundamental_data_as_of: Mapped[date | None] = mapped_column(Date)
+    eligible_stocks: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class HistoricalBackfillSymbolModel(Base):
+    __tablename__ = "historical_backfill_symbols"
+    __table_args__ = (
+        UniqueConstraint("job_id", "symbol", name="uq_historical_backfill_job_symbol"),
+        Index("ix_historical_backfill_symbols_status", "job_id", "status"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    job_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("historical_backfill_jobs.id"), nullable=False)
+    symbol: Mapped[str] = mapped_column(String(32), nullable=False)
+    requested_start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    requested_end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    rows_received: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    rows_written: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    invalid_rows_skipped: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    collection_run_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("collection_runs.id"))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

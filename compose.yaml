@@ -24,6 +24,7 @@ services:
       STOCKS_DATABASE_URL: postgresql+psycopg://stocks:stocks@db:5432/stocks
       STOCKS_TIMEZONE: Asia/Jakarta
       STOCKS_APP_PORT: "21235"
+      STOCKS_MARKET_CALENDAR_CONFIG_PATH: config/market-calendar/idx-v2.yaml
       STOCKS_RANKING_CONFIG_PATH: config/ranking/technical-v1.yaml
       STOCKS_ANALYSIS_CONFIG_PATH: config/analysis/technical-v1.yaml
       STOCKS_ALERTS_CONFIG_PATH: config/alerts/technical-v1.yaml
@@ -33,8 +34,10 @@ services:
       STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/swing-trend-following-v1.yaml
       STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
       STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
+      STOCKS_LIQUIDITY_CONFIG_PATH: config/liquidity/tiers-v1.yaml
+      STOCKS_FUNDAMENTAL_CONFIG_PATH: config/fundamentals/fundamental-v1.yaml
       STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"
-      STOCKS_CORS_ORIGINS: http://localhost:21231,http://127.0.0.1:21231
+      STOCKS_CORS_ORIGINS: http://localhost:21231,http://127.0.0.1:21231,http://103.92.215.204:21231
       STOCKS_TELEGRAM_BOT_TOKEN: ${STOCKS_TELEGRAM_BOT_TOKEN:-}
       STOCKS_TELEGRAM_CHAT_ID: ${STOCKS_TELEGRAM_CHAT_ID:-}
     ports:
@@ -47,19 +50,20 @@ services:
       test:
         [
           "CMD",
-          "uv",
-          "run",
-          "python",
+          "/app/.venv/bin/python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:21235/health', timeout=3)",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:21235/health', timeout=2)",
         ]
       interval: 10s
-      timeout: 5s
+      timeout: 3s
       retries: 10
-      start_period: 10s
+      start_period: 20s
 
   web:
-    build: ./web
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_PORT: "21235"
     environment:
       TZ: Asia/Jakarta
       API_INTERNAL_BASE_URL: http://app:21235
@@ -97,6 +101,8 @@ services:
       STOCKS_SCHEDULER_MINUTE: ${STOCKS_SCHEDULER_MINUTE:-0}
       STOCKS_SYNC_BOOTSTRAP_YEARS: ${STOCKS_SYNC_BOOTSTRAP_YEARS:-1}
       STOCKS_SYNC_POLL_SECONDS: ${STOCKS_SYNC_POLL_SECONDS:-2}
+      STOCKS_BACKFILL_BATCH_DELAY_SECONDS: ${STOCKS_BACKFILL_BATCH_DELAY_SECONDS:-0.25}
+      STOCKS_MARKET_CALENDAR_CONFIG_PATH: config/market-calendar/idx-v2.yaml
       STOCKS_RULES_CONFIG_PATH: config/rules-swing-v1.yaml
       STOCKS_SCORING_CONFIG_PATH: config/scoring/swing-trend-following-v1.yaml
       STOCKS_RANKING_CONFIG_PATH: config/ranking/technical-v1.yaml
@@ -106,6 +112,12 @@ services:
       STOCKS_OPTIMIZATION_CONFIG_PATH: config/optimization/swing-trend-following-v1.yaml
       STOCKS_RISK_CONFIG_PATH: config/risk/technical-v1.yaml
       STOCKS_POSITIONS_CONFIG_PATH: config/positions/swing-lifecycle-v1.yaml
+      STOCKS_LIQUIDITY_CONFIG_PATH: config/liquidity/tiers-v1.yaml
+      STOCKS_FUNDAMENTAL_CONFIG_PATH: config/fundamentals/fundamental-v1.yaml
+      STOCKS_FUNDAMENTAL_SCHEDULER_ENABLED: ${STOCKS_FUNDAMENTAL_SCHEDULER_ENABLED:-true}
+      STOCKS_FUNDAMENTAL_SCHEDULER_DAY: ${STOCKS_FUNDAMENTAL_SCHEDULER_DAY:-10}
+      STOCKS_FUNDAMENTAL_SCHEDULER_HOUR: ${STOCKS_FUNDAMENTAL_SCHEDULER_HOUR:-20}
+      STOCKS_FUNDAMENTAL_SCHEDULER_MINUTE: ${STOCKS_FUNDAMENTAL_SCHEDULER_MINUTE:-0}
       STOCKS_PORTFOLIO_INITIAL_CASH_IDR: "100000000"
       STOCKS_TELEGRAM_BOT_TOKEN: ${STOCKS_TELEGRAM_BOT_TOKEN:-}
       STOCKS_TELEGRAM_CHAT_ID: ${STOCKS_TELEGRAM_CHAT_ID:-}

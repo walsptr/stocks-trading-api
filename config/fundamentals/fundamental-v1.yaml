@@ -1,0 +1,23 @@
+version: fundamental-v1
+provider: yahoo
+thresholds:
+  healthy_roe_percent: 10
+  manageable_der_percent: 150
+  per_min: 0
+  per_max: 200
+  pbv_min: 0
+  pbv_max: 50
+  valuation_percentile: 80
+  sector_min_observations: 10
+completeness:
+  minimum_available_core_rules: 3
+weights:
+  positive_net_profit: 20
+  profit_growth_yoy: 25
+  healthy_roe: 25
+  manageable_der: 15
+  no_consecutive_losses: 15
+valuation_bonus: 5
+combined_weights:
+  technical: 40
+  fundamental: 60

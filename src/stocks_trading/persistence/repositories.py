@@ -1,12 +1,12 @@
 from collections.abc import Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, aliased, sessionmaker
 
 from stocks_trading.domain.models import (
     AlertDeliveryStatus,
@@ -88,6 +88,11 @@ from stocks_trading.persistence.models import (
     OptimizationWinnerSymbolModel,
     OptimizationWinnerTradeModel,
     ResearchJobModel,
+    HistoricalBackfillJobModel,
+    HistoricalBackfillSymbolModel,
+    FundamentalRunModel,
+    FundamentalSnapshotModel,
+    CombinedSyncRunModel,
     CollectionRunModel,
     AnalysisRunModel,
     AnalysisSymbolResultModel,
@@ -120,6 +125,320 @@ from stocks_trading.persistence.models import (
     SecurityModel,
     UniverseSnapshotModel,
 )
+
+
+class SqlAlchemyFundamentalRepository:
+    def __init__(self, session_factory: sessionmaker[Session]) -> None:
+        self.session_factory = session_factory
+
+    def active_securities(self, symbols: list[str] | None = None) -> list[dict[str, object]]:
+        with session_scope(self.session_factory) as session:
+            statement = select(SecurityModel.id, SecurityModel.symbol, SecurityModel.sector).where(SecurityModel.is_active.is_(True))
+            if symbols:
+                statement = statement.where(SecurityModel.symbol.in_(symbols))
+            return [dict(row._mapping) for row in session.execute(statement.order_by(SecurityModel.symbol))]
+
+    def create_run(self, version: str, checksum: str, requested_symbols: int) -> UUID:
+        with session_scope(self.session_factory) as session:
+            run = FundamentalRunModel(
+                calculation_version=version, config_checksum=checksum,
+                status="running", requested_symbols=requested_symbols,
+            )
+            session.add(run)
+            session.flush()
+            return run.id
+
+    def finish_run(self, run_id: UUID, *, success: int, insufficient: int, failed: int, error: str | None = None) -> None:
+        status = "succeeded" if failed == 0 else "partial_failure" if success + insufficient else "failed"
+        with session_scope(self.session_factory) as session:
+            session.execute(update(FundamentalRunModel).where(FundamentalRunModel.id == run_id).values(
+                status=status, success_count=success, insufficient_count=insufficient,
+                failure_count=failed, error=error, finished_at=datetime.now(UTC),
+            ))
+
+    def save_snapshots(self, rows: list[dict[str, object]]) -> int:
+        if not rows:
+            return 0
+        with session_scope(self.session_factory) as session:
+            statement = insert(FundamentalSnapshotModel).values(rows)
+            statement = statement.on_conflict_do_update(
+                constraint="uq_fundamental_snapshot_identity",
+                set_={key: getattr(statement.excluded, key) for key in rows[0] if key not in {"security_id", "fundamental_data_as_of", "calculation_version", "config_checksum"}},
+            )
+            session.execute(statement)
+            return len(rows)
+
+    def latest_snapshot_date(self, version: str, checksum: str) -> date | None:
+        with session_scope(self.session_factory) as session:
+            return session.scalar(select(func.max(FundamentalSnapshotModel.fundamental_data_as_of)).where(
+                FundamentalSnapshotModel.calculation_version == version,
+                FundamentalSnapshotModel.config_checksum == checksum,
+            ))
+
+    def ranking_page(self, *, view: str, version: str, checksum: str, technical_version: str,
+                     technical_checksum: str, technical_weight: Decimal, fundamental_weight: Decimal,
+                     limit: int, offset: int, rating: str | None = None):
+        with session_scope(self.session_factory) as session:
+            fundamental_date = self.latest_snapshot_date(version, checksum)
+            if fundamental_date is None:
+                return None
+            fundamental = aliased(FundamentalSnapshotModel)
+            latest_fundamental = select(
+                FundamentalSnapshotModel.security_id,
+                func.max(FundamentalSnapshotModel.fundamental_data_as_of).label("latest_date"),
+            ).where(
+                FundamentalSnapshotModel.calculation_version == version,
+                FundamentalSnapshotModel.config_checksum == checksum,
+            ).group_by(FundamentalSnapshotModel.security_id).subquery()
+            latest_conditions = [
+                fundamental.security_id == latest_fundamental.c.security_id,
+                fundamental.fundamental_data_as_of == latest_fundamental.c.latest_date,
+                fundamental.calculation_version == version,
+                fundamental.config_checksum == checksum,
+                fundamental.fundamental_score.is_not(None),
+                fundamental.data_status.in_(("complete", "partial")),
+            ]
+            if view == "fundamental":
+                total = session.scalar(select(func.count()).select_from(fundamental).join(latest_fundamental, fundamental.security_id == latest_fundamental.c.security_id).where(*latest_conditions)) or 0
+                rows = session.execute(select(fundamental, SecurityModel.symbol).join(latest_fundamental, fundamental.security_id == latest_fundamental.c.security_id).join(SecurityModel).where(*latest_conditions)
+                    .order_by(fundamental.fundamental_score.desc(), SecurityModel.symbol).offset(offset).limit(limit)).all()
+                return fundamental_date, None, rows, total
+            technical_date = session.scalar(select(func.max(DailyTechnicalScoreModel.trading_date)).where(
+                DailyTechnicalScoreModel.scoring_version == technical_version,
+                DailyTechnicalScoreModel.scoring_config_checksum == technical_checksum,
+            ))
+            if technical_date is None:
+                return None
+            conditions = [
+                *latest_conditions,
+                fundamental.is_red_flagged.is_(False),
+                DailyTechnicalScoreModel.trading_date == technical_date,
+                DailyTechnicalScoreModel.scoring_version == technical_version,
+                DailyTechnicalScoreModel.scoring_config_checksum == technical_checksum,
+                DailyTechnicalScoreModel.score.is_not(None),
+            ]
+            statement = select(fundamental, DailyTechnicalScoreModel, SecurityModel.symbol).join(
+                latest_fundamental, fundamental.security_id == latest_fundamental.c.security_id
+            ).join(
+                DailyTechnicalScoreModel, DailyTechnicalScoreModel.security_id == fundamental.security_id
+            ).join(SecurityModel, SecurityModel.id == fundamental.security_id).where(*conditions)
+            total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
+            combined = (DailyTechnicalScoreModel.score * technical_weight + fundamental.fundamental_score * fundamental_weight) / 100
+            rows = session.execute(statement.order_by(combined.desc(), SecurityModel.symbol).offset(offset).limit(limit)).all()
+            return fundamental_date, technical_date, rows, total
+
+    def latest_for_symbol(self, symbol: str, version: str, checksum: str):
+        with session_scope(self.session_factory) as session:
+            row = session.execute(select(FundamentalSnapshotModel, SecurityModel.symbol).join(SecurityModel).where(
+                SecurityModel.symbol == symbol,
+                FundamentalSnapshotModel.calculation_version == version,
+                FundamentalSnapshotModel.config_checksum == checksum,
+            ).order_by(FundamentalSnapshotModel.fundamental_data_as_of.desc()).limit(1)).first()
+            return row
+
+    def latest_run(self, version: str, checksum: str):
+        with session_scope(self.session_factory) as session:
+            run = session.scalar(select(FundamentalRunModel).where(
+                FundamentalRunModel.calculation_version == version,
+                FundamentalRunModel.config_checksum == checksum,
+            ).order_by(FundamentalRunModel.started_at.desc()).limit(1))
+            if run is None:
+                return None
+            return {column.name: getattr(run, column.name) for column in FundamentalRunModel.__table__.columns}
+
+    def record_combined_run(self, *, status: str, technical_data_as_of: date | None,
+                            fundamental_data_as_of: date | None, eligible_stocks: int,
+                            error: str | None = None) -> dict[str, object]:
+        with session_scope(self.session_factory) as session:
+            run = CombinedSyncRunModel(
+                status=status, technical_data_as_of=technical_data_as_of,
+                fundamental_data_as_of=fundamental_data_as_of,
+                eligible_stocks=eligible_stocks, error=error,
+                finished_at=datetime.now(UTC),
+            )
+            session.add(run); session.flush()
+            return {column.name: getattr(run, column.name) for column in CombinedSyncRunModel.__table__.columns}
+
+    def latest_combined_run(self) -> dict[str, object] | None:
+        with session_scope(self.session_factory) as session:
+            run = session.scalar(select(CombinedSyncRunModel).order_by(CombinedSyncRunModel.started_at.desc()).limit(1))
+            return {column.name: getattr(run, column.name) for column in CombinedSyncRunModel.__table__.columns} if run else None
+
+
+class SqlAlchemyHistoricalBackfillRepository:
+    def __init__(self, session_factory: sessionmaker[Session]) -> None:
+        self.session_factory = session_factory
+
+    def coverage(self, target_start_date: date) -> dict[str, object]:
+        with session_scope(self.session_factory) as session:
+            first_dates = (
+                select(
+                    SecurityModel.id.label("security_id"),
+                    func.min(DailyPriceModel.trading_date).label("first_date"),
+                    func.max(DailyPriceModel.trading_date).label("last_date"),
+                    func.count(DailyPriceModel.id).label("rows"),
+                )
+                .join(DailyPriceModel, DailyPriceModel.security_id == SecurityModel.id, isouter=True)
+                .where(SecurityModel.is_active.is_(True))
+                .group_by(SecurityModel.id)
+                .subquery()
+            )
+            row = session.execute(select(
+                func.count(first_dates.c.security_id),
+                func.count(first_dates.c.security_id).filter(first_dates.c.first_date.is_not(None)),
+                func.count(first_dates.c.security_id).filter(first_dates.c.first_date <= target_start_date),
+                func.min(first_dates.c.first_date),
+                func.max(first_dates.c.last_date),
+                func.coalesce(func.sum(first_dates.c.rows), 0),
+            )).one()
+            return {
+                "active_symbols": row[0], "symbols_with_data": row[1],
+                "symbols_meeting_target": row[2], "symbols_needing_backfill": row[0] - row[2],
+                "earliest_date": row[3], "latest_date": row[4], "total_rows": row[5],
+            }
+
+    def candidates(self, target_start_date: date, target_end_date: date) -> list[dict[str, object]]:
+        with session_scope(self.session_factory) as session:
+            rows = session.execute(
+                select(SecurityModel.symbol, func.min(DailyPriceModel.trading_date))
+                .join(DailyPriceModel, DailyPriceModel.security_id == SecurityModel.id, isouter=True)
+                .where(SecurityModel.is_active.is_(True))
+                .group_by(SecurityModel.id, SecurityModel.symbol)
+                .having((func.min(DailyPriceModel.trading_date).is_(None)) | (func.min(DailyPriceModel.trading_date) > target_start_date))
+                .order_by(SecurityModel.symbol)
+            ).all()
+            return [
+                {"symbol": symbol, "start_date": target_start_date,
+                 "end_date": min(target_end_date, first_date - timedelta(days=1)) if first_date else target_end_date}
+                for symbol, first_date in rows
+            ]
+
+    def create_job(self, target_years: int, start_date: date, end_date: date, symbols: list[dict[str, object]]):
+        with session_scope(self.session_factory) as session:
+            job = HistoricalBackfillJobModel(
+                id=uuid4(), target_years=target_years, target_start_date=start_date,
+                target_end_date=end_date, status="queued", stage="queued",
+                message="Historical backfill queued", total_symbols=len(symbols),
+            )
+            session.add(job); session.flush()
+            session.add_all([HistoricalBackfillSymbolModel(
+                job_id=job.id, symbol=item["symbol"], requested_start_date=item["start_date"],
+                requested_end_date=item["end_date"], status="pending",
+            ) for item in symbols])
+            session.flush()
+            return backfill_job_to_dict(job)
+
+    def update_job(self, job_id: UUID, **values):
+        values["updated_at"] = datetime.now(UTC)
+        with session_scope(self.session_factory) as session:
+            session.execute(update(HistoricalBackfillJobModel).where(HistoricalBackfillJobModel.id == job_id).values(**values))
+            job = session.get(HistoricalBackfillJobModel, job_id)
+            return backfill_job_to_dict(job) if job else None
+
+    def get_job(self, job_id: UUID):
+        with session_scope(self.session_factory) as session:
+            job = session.get(HistoricalBackfillJobModel, job_id)
+            return backfill_job_to_dict(job) if job else None
+
+    def current_job(self):
+        with session_scope(self.session_factory) as session:
+            job = session.scalar(select(HistoricalBackfillJobModel).where(
+                HistoricalBackfillJobModel.status.in_(("queued", "running", "rebuilding"))
+            ).order_by(HistoricalBackfillJobModel.started_at.desc()).limit(1))
+            return backfill_job_to_dict(job) if job else None
+
+    def latest_job(self):
+        with session_scope(self.session_factory) as session:
+            job = session.scalar(select(HistoricalBackfillJobModel).order_by(HistoricalBackfillJobModel.started_at.desc()).limit(1))
+            return backfill_job_to_dict(job) if job else None
+
+    def list_jobs(self, limit=10, offset=0):
+        with session_scope(self.session_factory) as session:
+            jobs = session.scalars(select(HistoricalBackfillJobModel).order_by(
+                HistoricalBackfillJobModel.started_at.desc()).offset(offset).limit(limit)).all()
+            return [backfill_job_to_dict(item) for item in jobs]
+
+    def count_jobs(self):
+        with session_scope(self.session_factory) as session:
+            return session.scalar(select(func.count(HistoricalBackfillJobModel.id))) or 0
+
+    def pending_symbols(self, job_id: UUID, resume: bool = False):
+        statuses = ("failed", "partial", "interrupted") if resume else ("pending", "running", "interrupted")
+        with session_scope(self.session_factory) as session:
+            rows = session.scalars(select(HistoricalBackfillSymbolModel).where(
+                HistoricalBackfillSymbolModel.job_id == job_id,
+                HistoricalBackfillSymbolModel.status.in_(statuses),
+            ).order_by(HistoricalBackfillSymbolModel.symbol)).all()
+            return [backfill_symbol_to_dict(item) for item in rows]
+
+    def update_symbol(self, job_id: UUID, symbol: str, **values):
+        with session_scope(self.session_factory) as session:
+            session.execute(update(HistoricalBackfillSymbolModel).where(
+                HistoricalBackfillSymbolModel.job_id == job_id,
+                HistoricalBackfillSymbolModel.symbol == symbol,
+            ).values(**values))
+
+    def symbols(self, job_id: UUID, status=None, limit=10, offset=0):
+        with session_scope(self.session_factory) as session:
+            statement = select(HistoricalBackfillSymbolModel).where(HistoricalBackfillSymbolModel.job_id == job_id)
+            if status:
+                statement = statement.where(HistoricalBackfillSymbolModel.status == status)
+            rows = session.scalars(statement.order_by(HistoricalBackfillSymbolModel.symbol).offset(offset).limit(limit)).all()
+            count_statement = select(func.count(HistoricalBackfillSymbolModel.id)).where(HistoricalBackfillSymbolModel.job_id == job_id)
+            if status:
+                count_statement = count_statement.where(HistoricalBackfillSymbolModel.status == status)
+            return [backfill_symbol_to_dict(item) for item in rows], session.scalar(count_statement) or 0
+
+    def refresh_counts(self, job_id: UUID):
+        with session_scope(self.session_factory) as session:
+            rows = session.execute(select(HistoricalBackfillSymbolModel.status, func.count(),
+                func.coalesce(func.sum(HistoricalBackfillSymbolModel.rows_written), 0),
+                func.coalesce(func.sum(HistoricalBackfillSymbolModel.invalid_rows_skipped), 0),
+            ).where(HistoricalBackfillSymbolModel.job_id == job_id).group_by(HistoricalBackfillSymbolModel.status)).all()
+            counts = {status: count for status, count, _, _ in rows}
+            processed = sum(count for status, count in counts.items() if status not in {"pending", "running", "interrupted"})
+            totals = session.execute(select(
+                func.coalesce(func.sum(HistoricalBackfillSymbolModel.rows_written), 0),
+                func.coalesce(func.sum(HistoricalBackfillSymbolModel.invalid_rows_skipped), 0),
+            ).where(HistoricalBackfillSymbolModel.job_id == job_id)).one()
+            values = {
+                "processed_symbols": processed,
+                "succeeded_symbols": counts.get("succeeded", 0),
+                "partial_symbols": counts.get("partial", 0),
+                "failed_symbols": counts.get("failed", 0),
+                "no_data_symbols": counts.get("no_data", 0),
+                "rows_written": totals[0], "invalid_rows_skipped": totals[1],
+            }
+            session.execute(update(HistoricalBackfillJobModel).where(HistoricalBackfillJobModel.id == job_id).values(**values, updated_at=datetime.now(UTC)))
+            return values
+
+    def reset_retryable(self, job_id: UUID) -> None:
+        with session_scope(self.session_factory) as session:
+            session.execute(update(HistoricalBackfillSymbolModel).where(
+                HistoricalBackfillSymbolModel.job_id == job_id,
+                HistoricalBackfillSymbolModel.status.in_(("failed", "partial", "interrupted")),
+            ).values(status="pending", rows_received=0, rows_written=0,
+                     invalid_rows_skipped=0, error=None, finished_at=None))
+
+    def interrupt_active(self) -> list[UUID]:
+        with session_scope(self.session_factory) as session:
+            ids = list(session.scalars(select(HistoricalBackfillJobModel.id).where(
+                HistoricalBackfillJobModel.status.in_(("queued", "running", "rebuilding")))).all())
+            if ids:
+                session.execute(update(HistoricalBackfillJobModel).where(HistoricalBackfillJobModel.id.in_(ids)).values(
+                    status="interrupted", stage="interrupted", message="Backfill interrupted; resuming", updated_at=datetime.now(UTC)))
+                session.execute(update(HistoricalBackfillSymbolModel).where(
+                    HistoricalBackfillSymbolModel.job_id.in_(ids), HistoricalBackfillSymbolModel.status == "running"
+                ).values(status="interrupted"))
+            return ids
+
+
+def backfill_job_to_dict(item):
+    return {column.name: getattr(item, column.name) for column in item.__table__.columns}
+
+
+def backfill_symbol_to_dict(item):
+    return {column.name: getattr(item, column.name) for column in item.__table__.columns}
 
 
 class SqlAlchemyResearchRepository:
@@ -328,6 +647,245 @@ class SqlAlchemyMarketDataRepository:
                     .order_by(SecurityModel.symbol)
                 ).all()
             )
+
+    def stock_exists(self, symbol: str) -> bool:
+        with session_scope(self.session_factory) as session:
+            return session.scalar(
+                select(SecurityModel.id).where(
+                    SecurityModel.symbol == symbol,
+                    SecurityModel.is_active.is_(True),
+                )
+            ) is not None
+
+    def liquidity_snapshot_date(self, indicator_version: str) -> date | None:
+        with session_scope(self.session_factory) as session:
+            return session.scalar(select(func.max(DailyIndicatorModel.trading_date)).where(
+                DailyIndicatorModel.calculation_version == indicator_version,
+                DailyIndicatorModel.provider == "yahoo",
+                DailyIndicatorModel.interval == "1d",
+            ))
+
+    def list_stock_summaries(
+        self, *, search: str | None = None, limit: int = 100, offset: int = 0,
+        indicator_version: str = "technical-v3", as_of_date: date | None = None,
+        min_turnover: Decimal | None = None, liquidity_tiers: tuple[str, ...] = (),
+        liquidity_thresholds: dict[str, Decimal] | None = None,
+    ) -> tuple[list[dict[str, object]], int, int]:
+        with session_scope(self.session_factory) as session:
+            universe_filters = [SecurityModel.is_active.is_(True)]
+            total_stocks = session.scalar(select(func.count(SecurityModel.id)).where(*universe_filters)) or 0
+            filters = list(universe_filters)
+            if search:
+                pattern = f"%{search.strip()}%"
+                filters.append(
+                    SecurityModel.symbol.ilike(pattern)
+                    | SecurityModel.idx_code.ilike(pattern)
+                    | SecurityModel.issuer_name.ilike(pattern)
+                )
+            latest_close = (
+                select(DailyPriceModel.close)
+                .where(
+                    DailyPriceModel.security_id == SecurityModel.id,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                )
+                .order_by(DailyPriceModel.trading_date.desc())
+                .limit(1)
+                .correlate(SecurityModel)
+                .scalar_subquery()
+            )
+            previous_close = (
+                select(DailyPriceModel.close)
+                .where(
+                    DailyPriceModel.security_id == SecurityModel.id,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                )
+                .order_by(DailyPriceModel.trading_date.desc())
+                .offset(1)
+                .limit(1)
+                .correlate(SecurityModel)
+                .scalar_subquery()
+            )
+            latest_volume = (
+                select(DailyPriceModel.volume)
+                .where(
+                    DailyPriceModel.security_id == SecurityModel.id,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                )
+                .order_by(DailyPriceModel.trading_date.desc())
+                .limit(1)
+                .correlate(SecurityModel)
+                .scalar_subquery()
+            )
+            latest_date = (
+                select(DailyPriceModel.trading_date)
+                .where(
+                    DailyPriceModel.security_id == SecurityModel.id,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                )
+                .order_by(DailyPriceModel.trading_date.desc())
+                .limit(1)
+                .correlate(SecurityModel)
+                .scalar_subquery()
+            )
+            indicator = aliased(DailyIndicatorModel)
+            statement = select(
+                SecurityModel.symbol,
+                SecurityModel.idx_code,
+                SecurityModel.issuer_name,
+                SecurityModel.board,
+                SecurityModel.sector,
+                latest_close.label("last_price"),
+                previous_close.label("previous_close"),
+                latest_volume.label("volume"),
+                latest_date.label("trading_date"),
+                indicator.average_traded_value_20.label("avg_daily_turnover_value"),
+                indicator.volume_ma_20.label("avg_daily_volume"),
+            ).outerjoin(indicator, (
+                indicator.security_id == SecurityModel.id
+            ) & (
+                indicator.calculation_version == indicator_version
+            ) & (
+                indicator.provider == "yahoo"
+            ) & (
+                indicator.interval == "1d"
+            ) & (
+                indicator.trading_date == as_of_date
+            )).where(*filters)
+            if min_turnover is not None:
+                statement = statement.where(indicator.average_traded_value_20 >= min_turnover)
+            if liquidity_tiers:
+                thresholds = liquidity_thresholds or {}
+                tier_conditions = []
+                if "high" in liquidity_tiers:
+                    tier_conditions.append(indicator.average_traded_value_20 >= thresholds["high"])
+                if "medium" in liquidity_tiers:
+                    tier_conditions.append(
+                        (indicator.average_traded_value_20 >= thresholds["medium"])
+                        & (indicator.average_traded_value_20 < thresholds["high"])
+                    )
+                if "low" in liquidity_tiers:
+                    tier_conditions.append(
+                        (indicator.average_traded_value_20 >= thresholds["low"])
+                        & (indicator.average_traded_value_20 < thresholds["medium"])
+                    )
+                statement = statement.where(or_(*tier_conditions))
+            filtered_count = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
+            rows = session.execute(
+                statement.order_by(SecurityModel.symbol).offset(offset).limit(limit)
+            ).all()
+            return [dict(row._mapping) for row in rows], total_stocks, filtered_count
+
+    def liquidity_breakdown(self, *, as_of_date: date, indicator_version: str,
+                            scoring_version: str, scoring_config_checksum: str):
+        with session_scope(self.session_factory) as session:
+            rows = session.execute(select(
+                SecurityModel.symbol,
+                DailyIndicatorModel.average_traded_value_20,
+                DailyIndicatorModel.volume_ma_20,
+                DailyTechnicalScoreModel.score,
+            ).select_from(SecurityModel).outerjoin(DailyIndicatorModel, (
+                DailyIndicatorModel.security_id == SecurityModel.id
+            ) & (DailyIndicatorModel.trading_date == as_of_date)
+              & (DailyIndicatorModel.calculation_version == indicator_version)
+              & (DailyIndicatorModel.provider == "yahoo")
+              & (DailyIndicatorModel.interval == "1d")
+            ).outerjoin(DailyTechnicalScoreModel, (
+                DailyTechnicalScoreModel.security_id == SecurityModel.id
+            ) & (DailyTechnicalScoreModel.trading_date == as_of_date)
+              & (DailyTechnicalScoreModel.scoring_version == scoring_version)
+              & (DailyTechnicalScoreModel.scoring_config_checksum == scoring_config_checksum)
+            ).where(SecurityModel.is_active.is_(True))).all()
+            return [dict(row._mapping) for row in rows]
+
+    def stock_metadata(self, symbol: str) -> dict[str, object] | None:
+        with session_scope(self.session_factory) as session:
+            security = session.scalar(
+                select(SecurityModel).where(
+                    SecurityModel.symbol == symbol,
+                    SecurityModel.is_active.is_(True),
+                )
+            )
+            if security is None:
+                return None
+            return {
+                "symbol": security.symbol,
+                "idx_code": security.idx_code,
+                "issuer_name": security.issuer_name,
+                "board": security.board,
+                "sector": security.sector,
+            }
+
+    def load_stock_candles(
+        self, symbol: str, *, start_date: date | None, end_date: date
+    ) -> list[DailyCandle]:
+        with session_scope(self.session_factory) as session:
+            statement = (
+                select(DailyPriceModel)
+                .join(SecurityModel)
+                .where(
+                    SecurityModel.symbol == symbol,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                    DailyPriceModel.trading_date <= end_date,
+                )
+                .order_by(DailyPriceModel.trading_date)
+            )
+            if start_date is not None:
+                statement = statement.where(DailyPriceModel.trading_date >= start_date)
+            return [
+                DailyCandle(
+                    symbol=symbol,
+                    trading_date=item.trading_date,
+                    open=item.open,
+                    high=item.high,
+                    low=item.low,
+                    close=item.close,
+                    adjusted_close=item.adjusted_close,
+                    volume=item.volume,
+                    provider=item.provider,
+                    interval=item.interval,
+                )
+                for item in session.scalars(statement).all()
+            ]
+
+    def load_stock_indicators(
+        self,
+        symbol: str,
+        *,
+        start_date: date | None,
+        end_date: date,
+        calculation_version: str,
+    ) -> dict[date, dict[str, object]]:
+        with session_scope(self.session_factory) as session:
+            statement = (
+                select(DailyIndicatorModel)
+                .join(SecurityModel)
+                .where(
+                    SecurityModel.symbol == symbol,
+                    DailyIndicatorModel.provider == "yahoo",
+                    DailyIndicatorModel.interval == "1d",
+                    DailyIndicatorModel.calculation_version == calculation_version,
+                    DailyIndicatorModel.trading_date <= end_date,
+                )
+            )
+            if start_date is not None:
+                statement = statement.where(DailyIndicatorModel.trading_date >= start_date)
+            return {
+                item.trading_date: {
+                    "ma20": item.sma_20,
+                    "ma50": item.sma_50,
+                    "ma200": item.sma_200,
+                    "rsi14": item.rsi_14,
+                    "macd": item.macd,
+                    "macd_signal": item.macd_signal,
+                    "atr14": item.atr_14,
+                }
+                for item in session.scalars(statement).all()
+            }
 
     def latest_trading_date(self, symbol: str) -> date | None:
         with session_scope(self.session_factory) as session:
@@ -1403,6 +1961,14 @@ class SqlAlchemyRankingRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
         self.session_factory = session_factory
 
+    def liquidity_snapshot_date(self, indicator_version: str) -> date | None:
+        with session_scope(self.session_factory) as session:
+            return session.scalar(select(func.max(DailyIndicatorModel.trading_date)).where(
+                DailyIndicatorModel.calculation_version == indicator_version,
+                DailyIndicatorModel.provider == "yahoo",
+                DailyIndicatorModel.interval == "1d",
+            ))
+
     def source_score_dates(
         self, scoring_version: str, scoring_config_checksum: str,
         *, start_date: date | None, end_date: date | None,
@@ -1442,6 +2008,21 @@ class SqlAlchemyRankingRepository:
                 DailyRankingModel.ranking_version == ranking_version,
                 DailyRankingModel.ranking_config_checksum == ranking_config_checksum,
             ))
+
+    def latest_completed_run(self, ranking_version: str, ranking_config_checksum: str) -> dict[str, object] | None:
+        with session_scope(self.session_factory) as session:
+            run = session.scalar(select(RankingRunModel).where(
+                RankingRunModel.ranking_version == ranking_version,
+                RankingRunModel.ranking_config_checksum == ranking_config_checksum,
+                RankingRunModel.finished_at.is_not(None),
+            ).order_by(RankingRunModel.finished_at.desc()).limit(1))
+            if run is None:
+                return None
+            return {
+                "id": run.id, "status": run.status.value, "started_at": run.started_at,
+                "finished_at": run.finished_at, "success_count": run.success_count,
+                "no_data_count": run.no_data_count, "failure_count": run.failure_count,
+            }
 
     def replace_rankings(
         self, trading_date: date, ranking_version: str,
@@ -1496,6 +2077,9 @@ class SqlAlchemyRankingRepository:
     def ranking_snapshot_page(
         self, ranking_version: str, ranking_config_checksum: str,
         *, trading_date: date | None, rating: str | None, limit: int, offset: int,
+        liquidity_as_of_date: date | None = None, indicator_version: str | None = None,
+        min_turnover: Decimal | None = None, liquidity_tiers: tuple[str, ...] = (),
+        liquidity_thresholds: dict[str, Decimal] | None = None,
     ):
         with session_scope(self.session_factory) as session:
             selected_date = trading_date or session.scalar(select(func.max(DailyRankingModel.trading_date)).where(
@@ -1511,11 +2095,32 @@ class SqlAlchemyRankingRepository:
             ]
             if rating is not None:
                 conditions.append(func.lower(DailyRankingModel.rating) == rating.lower())
-            total = session.scalar(select(func.count(DailyRankingModel.id)).where(*conditions)) or 0
-            rows = session.execute(select(DailyRankingModel, SecurityModel.symbol).join(SecurityModel).where(
-                *conditions
-            ).order_by(DailyRankingModel.rank, SecurityModel.symbol).offset(offset).limit(limit)).all()
-            return selected_date, [daily_ranking_model_to_domain(symbol, item) for item, symbol in rows], total
+            unfiltered_total = session.scalar(select(func.count(DailyRankingModel.id)).where(*conditions)) or 0
+            statement = select(DailyRankingModel, SecurityModel.symbol).join(SecurityModel)
+            if min_turnover is not None or liquidity_tiers:
+                indicator = aliased(DailyIndicatorModel)
+                statement = statement.join(indicator, (
+                    indicator.security_id == DailyRankingModel.security_id
+                ) & (indicator.trading_date == liquidity_as_of_date)
+                  & (indicator.calculation_version == indicator_version)
+                  & (indicator.provider == "yahoo") & (indicator.interval == "1d"))
+                if min_turnover is not None:
+                    statement = statement.where(indicator.average_traded_value_20 >= min_turnover)
+                if liquidity_tiers:
+                    thresholds = liquidity_thresholds or {}
+                    tier_conditions = []
+                    if "high" in liquidity_tiers:
+                        tier_conditions.append(indicator.average_traded_value_20 >= thresholds["high"])
+                    if "medium" in liquidity_tiers:
+                        tier_conditions.append((indicator.average_traded_value_20 >= thresholds["medium"]) & (indicator.average_traded_value_20 < thresholds["high"]))
+                    if "low" in liquidity_tiers:
+                        tier_conditions.append((indicator.average_traded_value_20 >= thresholds["low"]) & (indicator.average_traded_value_20 < thresholds["medium"]))
+                    statement = statement.where(or_(*tier_conditions))
+            filtered = statement.where(*conditions)
+            total = session.scalar(select(func.count()).select_from(filtered.subquery())) or 0
+            rows = session.execute(filtered.order_by(DailyRankingModel.rank, SecurityModel.symbol).offset(offset).limit(limit)).all()
+            total_stocks = session.scalar(select(func.count(SecurityModel.id)).where(SecurityModel.is_active.is_(True))) or 0
+            return selected_date, [daily_ranking_model_to_domain(symbol, item) for item, symbol in rows], total, unfiltered_total, total_stocks
 
 
 class SqlAlchemyRankingRunRepository:
@@ -2668,7 +3273,10 @@ class SqlAlchemyPositionRepository:
 
     def source_dates(self, configuration, start_date=None, end_date=None) -> list[date]:
         with session_scope(self.session_factory) as session:
-            statement = select(DailyPriceModel.trading_date).distinct().order_by(DailyPriceModel.trading_date)
+            statement = select(DailyPriceModel.trading_date).where(
+                DailyPriceModel.provider == "yahoo",
+                DailyPriceModel.interval == "1d",
+            ).distinct().order_by(DailyPriceModel.trading_date)
             if start_date is not None:
                 statement = statement.where(DailyPriceModel.trading_date >= start_date)
             if end_date is not None:
@@ -2677,43 +3285,89 @@ class SqlAlchemyPositionRepository:
 
     def load_sources(self, trading_date: date, configuration) -> list[PositionSourceDay]:
         with session_scope(self.session_factory) as session:
-            prices = session.execute(select(DailyPriceModel, SecurityModel.symbol).join(SecurityModel).where(
-                DailyPriceModel.trading_date == trading_date
-            ).order_by(SecurityModel.symbol)).all()
-            sources = []
-            for candle_model, symbol in prices:
-                strategy = session.scalar(select(DailyStrategyResultModel).join(SecurityModel).where(
-                    SecurityModel.symbol == symbol,
-                    DailyStrategyResultModel.trading_date == trading_date,
-                    DailyStrategyResultModel.strategy_name == configuration.strategy_name,
-                    DailyStrategyResultModel.strategy_version == configuration.strategy_version,
-                    DailyStrategyResultModel.strategy_config_checksum == configuration.strategy_config_checksum,
-                ))
-                indicator = session.scalar(select(DailyIndicatorModel).join(SecurityModel).where(
-                    SecurityModel.symbol == symbol, DailyIndicatorModel.trading_date == trading_date,
-                    DailyIndicatorModel.calculation_version == "technical-v3",
-                ))
-                rule = session.scalar(select(DailyRuleModel).join(SecurityModel).where(
-                    SecurityModel.symbol == symbol, DailyRuleModel.trading_date == trading_date,
-                    DailyRuleModel.formula_version == "rules-swing-v1",
-                ).order_by(DailyRuleModel.id.desc()))
-                risk = session.scalar(select(DailyRiskRecommendationModel).join(SecurityModel).where(
-                    SecurityModel.symbol == symbol, DailyRiskRecommendationModel.trading_date == trading_date,
-                ).order_by(DailyRiskRecommendationModel.id.desc()))
-                sources.append(PositionSourceDay(
+            strategy = aliased(DailyStrategyResultModel)
+            indicator = aliased(DailyIndicatorModel)
+            rule = aliased(DailyRuleModel)
+            risk = aliased(DailyRiskRecommendationModel)
+            rows = session.execute(
+                select(
+                    DailyPriceModel,
+                    SecurityModel.symbol,
+                    strategy.passed,
+                    indicator.atr_14,
+                    rule.ma20_below_ma50,
+                    rule.rsi_extreme_overbought,
+                    risk.suggested_position_size_pct,
+                )
+                .join(SecurityModel, SecurityModel.id == DailyPriceModel.security_id)
+                .outerjoin(
+                    strategy,
+                    (strategy.security_id == DailyPriceModel.security_id)
+                    & (strategy.provider == DailyPriceModel.provider)
+                    & (strategy.interval == DailyPriceModel.interval)
+                    & (strategy.trading_date == DailyPriceModel.trading_date)
+                    & (strategy.strategy_name == configuration.strategy_name)
+                    & (strategy.strategy_version == configuration.strategy_version)
+                    & (strategy.strategy_config_checksum == configuration.strategy_config_checksum),
+                )
+                .outerjoin(
+                    indicator,
+                    (indicator.security_id == DailyPriceModel.security_id)
+                    & (indicator.provider == DailyPriceModel.provider)
+                    & (indicator.interval == DailyPriceModel.interval)
+                    & (indicator.trading_date == DailyPriceModel.trading_date)
+                    & (indicator.calculation_version == configuration.indicator_version),
+                )
+                .outerjoin(
+                    rule,
+                    (rule.security_id == DailyPriceModel.security_id)
+                    & (rule.provider == DailyPriceModel.provider)
+                    & (rule.interval == DailyPriceModel.interval)
+                    & (rule.trading_date == DailyPriceModel.trading_date)
+                    & (rule.formula_version == configuration.rule_formula_version)
+                    & (rule.config_checksum == configuration.rule_config_checksum),
+                )
+                .outerjoin(
+                    risk,
+                    (risk.security_id == DailyPriceModel.security_id)
+                    & (risk.provider == DailyPriceModel.provider)
+                    & (risk.interval == DailyPriceModel.interval)
+                    & (risk.trading_date == DailyPriceModel.trading_date)
+                    & (risk.risk_version == configuration.risk_version)
+                    & (risk.risk_config_checksum == configuration.risk_config_checksum),
+                )
+                .where(
+                    DailyPriceModel.trading_date == trading_date,
+                    DailyPriceModel.provider == "yahoo",
+                    DailyPriceModel.interval == "1d",
+                    SecurityModel.is_active.is_(True),
+                )
+                .order_by(SecurityModel.symbol)
+            ).all()
+            return [
+                PositionSourceDay(
                     candle=DailyCandle(
                         symbol, candle_model.trading_date, candle_model.open,
                         candle_model.high, candle_model.low, candle_model.close,
                         candle_model.adjusted_close, candle_model.volume,
                         candle_model.provider, candle_model.interval,
                     ),
-                    strategy_passed=strategy is not None and strategy.passed is True,
-                    atr_14=indicator.atr_14 if indicator else None,
-                    ma20_below_ma50=rule.ma20_below_ma50 if rule else None,
-                    rsi_extreme_overbought=rule.rsi_extreme_overbought if rule else None,
-                    suggested_position_size_pct=risk.suggested_position_size_pct if risk else None,
-                ))
-            return sources
+                    strategy_passed=strategy_passed is True,
+                    atr_14=atr_14,
+                    ma20_below_ma50=ma20_below_ma50,
+                    rsi_extreme_overbought=rsi_extreme_overbought,
+                    suggested_position_size_pct=suggested_position_size_pct,
+                )
+                for (
+                    candle_model,
+                    symbol,
+                    strategy_passed,
+                    atr_14,
+                    ma20_below_ma50,
+                    rsi_extreme_overbought,
+                    suggested_position_size_pct,
+                ) in rows
+            ]
 
     def active_positions(self, configuration) -> dict[str, VirtualPosition]:
         with session_scope(self.session_factory) as session:

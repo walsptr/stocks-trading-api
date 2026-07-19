@@ -1,0 +1,9 @@
+version: liquidity-tiers-v1
+indicator_version: technical-v3
+tiers:
+  high:
+    min_turnover: 5000000000
+  medium:
+    min_turnover: 1000000000
+  low:
+    min_turnover: 0

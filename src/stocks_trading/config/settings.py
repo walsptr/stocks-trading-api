@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     retry_base_seconds: float = Field(default=1.0, ge=0)
     incremental_overlap_days: int = Field(default=7, ge=0, le=30)
     log_level: str = "INFO"
+    market_calendar_config_path: Path = Path("config/market-calendar/idx-v2.yaml")
     rules_config_path: Path = Path("config/rules-swing-v1.yaml")
     strategies_config_dir: Path = Path("config/strategies")
     scoring_config_path: Path = Path("config/scoring/swing-trend-following-v1.yaml")
@@ -32,6 +33,12 @@ class Settings(BaseSettings):
     optimization_config_path: Path = Path("config/optimization/swing-trend-following-v1.yaml")
     risk_config_path: Path = Path("config/risk/technical-v1.yaml")
     positions_config_path: Path = Path("config/positions/swing-lifecycle-v1.yaml")
+    liquidity_config_path: Path = Path("config/liquidity/tiers-v1.yaml")
+    fundamental_config_path: Path = Path("config/fundamentals/fundamental-v1.yaml")
+    fundamental_scheduler_enabled: bool = True
+    fundamental_scheduler_day: int = Field(default=10, ge=1, le=28)
+    fundamental_scheduler_hour: int = Field(default=20, ge=0, le=23)
+    fundamental_scheduler_minute: int = Field(default=0, ge=0, le=59)
     portfolio_initial_cash_idr: Decimal = Field(default=Decimal("100000000"), gt=0)
     cors_origins: str = "http://localhost:21231,http://127.0.0.1:21231"
     scheduler_enabled: bool = True
@@ -40,6 +47,7 @@ class Settings(BaseSettings):
     scheduler_minute: int = Field(default=0, ge=0, le=59)
     sync_bootstrap_years: int = Field(default=1, ge=1, le=5)
     sync_poll_seconds: float = Field(default=2.0, ge=1, le=30)
+    backfill_batch_delay_seconds: float = Field(default=0.25, ge=0, le=10)
     telegram_bot_token: str | None = None
     telegram_chat_id: str | None = None
 

@@ -3,6 +3,12 @@ strategy:
   name: Swing Trend Following
   version: swing-trend-following-v1
   config_checksum: c40d8ee21c8dcf5f5e215f63075c2f7bfbee1bd6d615d38dd6e5f929bad9cea0
+sources:
+  indicator_version: technical-v3
+  rule_formula_version: rules-swing-v1
+  rule_config_checksum: c503472236a60102d2ff06afef5a7eff48248602db5f2bfd45194ccf206dc4e5
+  risk_version: technical-risk-v2
+  risk_config_checksum: d887ffdfc09faf0ce0c95584e87d08c0309378d28c6610e3fe90898db3da64d7
 stop_atr_multiple: 1.5
 trailing_atr_multiple: 1.5
 take_profit_1_r_multiple: 1.5

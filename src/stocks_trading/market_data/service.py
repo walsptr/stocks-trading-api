@@ -19,6 +19,7 @@ from stocks_trading.domain.ports import (
     RunRepository,
 )
 from stocks_trading.market_data.yahoo import latest_completed_market_date
+from stocks_trading.market_data.calendar import load_market_calendar
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,9 @@ class MarketDataCollector:
         self.market_repository = market_repository
         self.run_repository = run_repository
         self.settings = settings
+        self.market_calendar = load_market_calendar(
+            settings.market_calendar_config_path
+        )
 
     async def bootstrap(
         self,
@@ -45,7 +49,7 @@ class MarketDataCollector:
         as_of: date | None = None,
     ) -> CollectionRunResult:
         end_date = as_of or latest_completed_market_date(
-            datetime.now(UTC), self.settings.market_timezone
+            datetime.now(UTC), self.settings.market_timezone, self.market_calendar
         )
         start_date = end_date - timedelta(days=years * 365 + years // 4 + 5)
         return await self.collect(
@@ -65,7 +69,7 @@ class MarketDataCollector:
     ) -> CollectionRunResult:
         selected = self._select_symbols(symbols)
         end_date = as_of or latest_completed_market_date(
-            datetime.now(UTC), self.settings.market_timezone
+            datetime.now(UTC), self.settings.market_timezone, self.market_calendar
         )
         start_dates = {
             symbol: self._incremental_start_date(symbol, end_date)
@@ -99,7 +103,7 @@ class MarketDataCollector:
 
     def status(self, *, as_of: date | None = None) -> dict[str, object]:
         target = as_of or latest_completed_market_date(
-            datetime.now(UTC), self.settings.market_timezone
+            datetime.now(UTC), self.settings.market_timezone, self.market_calendar
         )
         return self.market_repository.cache_status(target)
 

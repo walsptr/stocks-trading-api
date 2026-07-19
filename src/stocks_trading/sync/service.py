@@ -14,18 +14,21 @@ from stocks_trading.domain.models import RunStatus
 from stocks_trading.persistence.database import create_database_engine
 
 PIPELINE_LOCK_ID = 728194531
-STAGES = (
+TECHNICAL_STAGES = (
     ("market_data", "Downloading market data"),
     ("indicators", "Calculating indicators"),
     ("rules", "Evaluating rules"),
     ("strategies", "Evaluating Swing Trend Following strategy"),
     ("scores", "Calculating technical scores"),
     ("rankings", "Building ranking snapshot"),
+)
+DOWNSTREAM_STAGES = (
     ("analyses", "Generating stock analysis"),
     ("risk", "Generating ATR risk levels"),
     ("positions", "Updating virtual Swing positions"),
     ("alerts", "Updating alerts"),
 )
+STAGES = TECHNICAL_STAGES + DOWNSTREAM_STAGES
 
 
 class SyncStatus(StrEnum):
@@ -42,7 +45,7 @@ class SyncJob:
     status: SyncStatus = SyncStatus.QUEUED
     stage: str = "queued"
     stage_index: int = 0
-    stage_count: int = len(STAGES)
+    stage_count: int = len(TECHNICAL_STAGES)
     message: str = "Preparing sync"
     market_run_id: UUID | None = None
     error: str | None = None
@@ -90,6 +93,7 @@ async def execute_pipeline(
     *,
     bootstrap_years: int,
     progress: ProgressCallback | None = None,
+    include_downstream: bool = True,
 ) -> tuple[bool, UUID | None]:
     async def report(stage: str, index: int, message: str) -> None:
         if progress:
@@ -108,18 +112,22 @@ async def execute_pipeline(
     if market_result.status == RunStatus.FAILED:
         raise RuntimeError("Market data collection failed")
     partial = market_result.status == RunStatus.PARTIAL_FAILURE
-    stage_calls = (
+    technical_calls = (
         services[5].update,
         services[7].update,
         services[9].update,
         services[11].update,
         services[13].update,
+    )
+    downstream_calls = (
         services[15].update,
         services[17].update,
         services[19].update,
         services[21].update,
     )
-    for index, ((stage, message), stage_call) in enumerate(zip(STAGES[1:], stage_calls), start=2):
+    selected_stages = TECHNICAL_STAGES[1:] + (DOWNSTREAM_STAGES if include_downstream else ())
+    selected_calls = technical_calls + (downstream_calls if include_downstream else ())
+    for index, ((stage, message), stage_call) in enumerate(zip(selected_stages, selected_calls), start=2):
         await report(stage, index, message)
         result = await stage_call()
         status = getattr(result, "status", None)
@@ -178,7 +186,8 @@ class SyncManager:
         try:
             async with self.coordinator.lock():
                 partial, market_run_id = await execute_pipeline(
-                    self.service_factory(), bootstrap_years=years, progress=progress
+                    self.service_factory(), bootstrap_years=years, progress=progress,
+                    include_downstream=False,
                 )
                 job.market_run_id = market_run_id
                 job.status = SyncStatus.PARTIAL_FAILURE if partial else SyncStatus.SUCCEEDED

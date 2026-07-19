@@ -13,6 +13,11 @@ class PositionConfiguration:
     strategy_name: str
     strategy_version: str
     strategy_config_checksum: str
+    indicator_version: str
+    rule_formula_version: str
+    rule_config_checksum: str
+    risk_version: str
+    risk_config_checksum: str
     stop_atr_multiple: Decimal
     trailing_atr_multiple: Decimal
     take_profit_1_r_multiple: Decimal
@@ -28,11 +33,17 @@ def load_position_configuration(path: Path) -> PositionConfiguration:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     strategy = payload["strategy"]
+    sources = payload["sources"]
     return PositionConfiguration(
         version=str(payload["version"]),
         strategy_name=str(strategy["name"]),
         strategy_version=str(strategy["version"]),
         strategy_config_checksum=str(strategy["config_checksum"]),
+        indicator_version=str(sources["indicator_version"]),
+        rule_formula_version=str(sources["rule_formula_version"]),
+        rule_config_checksum=str(sources["rule_config_checksum"]),
+        risk_version=str(sources["risk_version"]),
+        risk_config_checksum=str(sources["risk_config_checksum"]),
         stop_atr_multiple=Decimal(str(payload["stop_atr_multiple"])),
         trailing_atr_multiple=Decimal(str(payload["trailing_atr_multiple"])),
         take_profit_1_r_multiple=Decimal(str(payload["take_profit_1_r_multiple"])),

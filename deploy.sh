@@ -150,7 +150,7 @@ main() {
     compose up --detach web
     wait_for_frontend
 
-    log "Starting the weekday market pipeline scheduler"
+    log "Starting the market-calendar-aware pipeline scheduler"
     compose up --detach scheduler
 
     log "Deployment complete"

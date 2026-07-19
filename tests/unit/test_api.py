@@ -22,8 +22,165 @@ from stocks_trading.strategies.config import load_strategy_configuration
 from stocks_trading.scoring.config import load_scoring_configuration
 from pathlib import Path
 from datetime import UTC, date, datetime
+from decimal import Decimal
 
 client = TestClient(app)
+
+
+class FakeStockService:
+    def list(self, *, search, limit, offset, min_turnover=None, liquidity_tiers=()):
+        items = [
+                {
+                    "symbol": "BBCA.JK",
+                    "idx_code": "BBCA",
+                    "issuer_name": "Bank Central Asia Tbk",
+                    "board": "Main",
+                    "sector": "Financials",
+                    "last_price": Decimal("9200"),
+                    "daily_change": Decimal("100"),
+                    "daily_change_percent": Decimal("1.0989"),
+                    "volume": 12_000_000,
+                    "trading_date": date(2026, 7, 17),
+                    "avg_daily_turnover_value": Decimal("6000000000"),
+                    "avg_daily_volume": Decimal("650000"),
+                    "liquidity_tier": "high",
+                }
+            ]
+        return {
+            "stocks": items, "items": items,
+            "total_stocks": 863, "filtered_count": 1,
+            "filters_applied": {}, "as_of_date": date(2026, 7, 17),
+            "total": 1,
+            "limit": limit,
+            "offset": offset,
+        }
+
+    def liquidity_breakdown(self, **kwargs):
+        return {"as_of_date": date(2026, 7, 17), "breakdown": [], "unclassified_count": 9}
+
+    async def detail(self, symbol, *, period, interval):
+        if symbol != "BBCA.JK":
+            from stocks_trading.stocks.service import StockNotFoundError
+
+            raise StockNotFoundError(f"symbol {symbol} is not active in the IDX universe")
+        return {
+            "symbol": symbol,
+            "idx_code": "BBCA",
+            "issuer_name": "Bank Central Asia Tbk",
+            "board": "Main",
+            "sector": "Financials",
+            "period": period,
+            "interval": interval,
+            "last_price": Decimal("9200"),
+            "daily_change": Decimal("100"),
+            "daily_change_percent": Decimal("1.0989"),
+            "volume": 12_000_000,
+            "trading_date": "2026-07-17",
+            "candles": [
+                {
+                    "date": "2026-07-17",
+                    "open": Decimal("9100"),
+                    "high": Decimal("9250"),
+                    "low": Decimal("9050"),
+                    "close": Decimal("9200"),
+                    "adjusted_close": Decimal("9200"),
+                    "volume": 12_000_000,
+                    "ma20": Decimal("9000"),
+                    "ma50": Decimal("8800"),
+                    "rsi14": Decimal("58.2"),
+                }
+            ],
+        }
+
+
+def test_stocks_listing_returns_chart_summary() -> None:
+    from stocks_trading.api.app import stocks_dependencies
+
+    app.dependency_overrides[stocks_dependencies] = lambda: FakeStockService()
+    try:
+        response = client.get("/stocks?search=BBCA")
+        assert response.status_code == 200
+        assert response.json()["items"][0]["symbol"] == "BBCA.JK"
+        assert response.json()["items"][0]["daily_change_percent"] == 1.0989
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_stocks_rejects_invalid_liquidity_tier() -> None:
+    from stocks_trading.api.app import stocks_dependencies
+
+    app.dependency_overrides[stocks_dependencies] = lambda: FakeStockService()
+    try:
+        response = client.get("/stocks?liquidity_tier=high,unknown")
+        assert response.status_code == 422
+        assert response.json()["detail"] == "unsupported liquidity tier: unknown"
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_stock_detail_normalizes_symbol_and_returns_chart_rows() -> None:
+    from stocks_trading.api.app import stocks_dependencies
+
+    app.dependency_overrides[stocks_dependencies] = lambda: FakeStockService()
+    try:
+        response = client.get("/stocks/bbca?period=6mo&interval=1d")
+        assert response.status_code == 200
+        assert response.json()["symbol"] == "BBCA.JK"
+        assert response.json()["candles"][0]["ma20"] == 9000
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_stock_detail_returns_clear_not_found_error() -> None:
+    from stocks_trading.api.app import stocks_dependencies
+
+    app.dependency_overrides[stocks_dependencies] = lambda: FakeStockService()
+    try:
+        response = client.get("/stocks/unknown")
+        assert response.status_code == 404
+        assert "not active" in response.json()["detail"]
+    finally:
+        app.dependency_overrides.clear()
+
+
+class FakeLiveRepository:
+    def stock_metadata(self, symbol):
+        return {"symbol": symbol} if symbol == "BBCA.JK" else None
+
+
+class FakeLiveManager:
+    async def stream(self, symbol):
+        yield {"event": "tick", "data": {"symbol": symbol, "price": 9200}}
+
+    def snapshot(self, symbol):
+        return {"symbol": symbol, "status": "connected", "tick_count": 1, "ticks": []}
+
+
+def test_live_tick_snapshot_and_symbol_validation() -> None:
+    from stocks_trading.api.app import live_stream_dependencies
+
+    app.dependency_overrides[live_stream_dependencies] = lambda: (FakeLiveManager(), FakeLiveRepository())
+    try:
+        response = client.get("/debug/live/ticks/bbca")
+        assert response.status_code == 200
+        assert response.json()["symbol"] == "BBCA.JK"
+        assert client.get("/debug/live/ticks/unknown").status_code == 404
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_live_stream_returns_sse_headers_and_tick_event() -> None:
+    from stocks_trading.api.app import live_stream_dependencies
+
+    app.dependency_overrides[live_stream_dependencies] = lambda: (FakeLiveManager(), FakeLiveRepository())
+    try:
+        response = client.get("/stocks/BBCA/live")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("text/event-stream")
+        assert "event: tick" in response.text
+        assert '"price":9200' in response.text
+    finally:
+        app.dependency_overrides.clear()
 
 
 def test_root_describes_application() -> None:
@@ -80,6 +237,71 @@ def test_market_data_status_endpoint() -> None:
         assert response.json()["last_collection_finished_at"] == "2026-07-17T17:05:00+07:00"
     finally:
         app.dependency_overrides.clear()
+
+
+def test_market_calendar_endpoint_reports_coverage_and_trading_dates() -> None:
+    response = client.get("/market-calendar?as_of=2027-01-02")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["calendar_version"] == "idx-v2"
+    assert payload["source_reference"] == "PENG-0002/DIR/KSEI/0126"
+    assert payload["timezone"] == "Asia/Jakarta"
+    assert payload["coverage"]["2027"]["status"] == "pending"
+    assert payload["coverage_status"] == "pending"
+    assert payload["selected_date"] == "2027-01-02"
+    assert payload["is_trading_day"] is False
+    assert payload["next_trading_day"] == "2027-01-04"
+    assert payload["previous_trading_day"] == "2027-01-01"
+
+
+def test_operations_status_endpoint_reports_calendar_scheduler_cache_and_sync() -> None:
+    from stocks_trading.api import app as api_module
+
+    original_availability = api_module.backfill_manager.availability
+    original_current = api_module.backfill_manager.current
+    api_module.backfill_manager.availability = lambda years: {
+        "target_years": years, "target_start_date": date(2021, 7, 11),
+        "target_end_date": date(2026, 7, 17), "active_symbols": 863,
+        "symbols_with_data": 817, "symbols_meeting_target": 112,
+        "symbols_needing_backfill": 751, "earliest_date": date(2021, 7, 12),
+        "latest_date": date(2026, 7, 17), "total_rows": 324727,
+    }
+    api_module.backfill_manager.current = lambda: None
+    try:
+        response = client.get("/operations/status")
+    finally:
+        api_module.backfill_manager.availability = original_availability
+        api_module.backfill_manager.current = original_current
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["api_status"] == "healthy"
+    assert payload["calendar"]["timezone"] == "Asia/Jakarta"
+    assert payload["calendar"]["official_years"] == [2026]
+    assert payload["calendar"]["pending_years"] == [2027, 2028]
+    assert payload["calendar"]["coverage"]["2026"] == {
+        "status": "official",
+        "closure_count": 22,
+    }
+    assert payload["scheduler"]["enabled"] is True
+    assert payload["scheduler"]["next_run_at"] is not None
+    assert "target_date" in payload["market_data"]
+    assert "status" in payload["sync"]
+    assert set(payload["scoped_sync"]) == {"technical", "fundamental", "combined"}
+    assert "status" in payload["scoped_sync"]["technical"]
+    assert "status" in payload["scoped_sync"]["fundamental"]
+    assert payload["scoped_sync"]["combined"]["status"] == "idle"
+
+
+def test_scoped_backtest_endpoint_is_available() -> None:
+    response = client.post(
+        "/sync/backtest",
+        json={"start_date": "1900-01-01", "end_date": "1900-01-02"},
+    )
+
+    assert response.status_code == 422
+    assert "Technical tab" in response.json()["detail"]
 
 
 class FakeRuleRepository:
@@ -243,6 +465,9 @@ def test_latest_score_and_history() -> None:
 
 
 class FakeRankingRepository:
+    def liquidity_snapshot_date(self, indicator_version):
+        return date(2026, 7, 16)
+
     def ranking_snapshot(self, version, checksum, *, trading_date, rating, limit):
         selected = trading_date or date(2026, 7, 16)
         values = [
@@ -253,9 +478,9 @@ class FakeRankingRepository:
             values = [item for item in values if item.rating.lower() == rating.lower()]
         return selected, values[:limit]
 
-    def ranking_snapshot_page(self, version, checksum, *, trading_date, rating, limit, offset):
+    def ranking_snapshot_page(self, version, checksum, *, trading_date, rating, limit, offset, **kwargs):
         selected, values = self.ranking_snapshot(version, checksum, trading_date=trading_date, rating=rating, limit=500)
-        return selected, values[offset:offset + limit], len(values)
+        return selected, values[offset:offset + limit], len(values), len(values), 863
 
 
 def ranking_result(symbol, trading_date, rank, score, rating):
